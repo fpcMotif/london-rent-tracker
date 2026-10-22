@@ -4,7 +4,7 @@ Previous run: none, so this run is the baseline.
 
 ## Area summary
 
-Commute is the fastest Tube/DLR/Elizabeth line journey from each flat, arriving 0845 on a weekday.
+Commute is the fastest Tube/DLR/Elizabeth line journey from each flat, arriving 0845 on a weekday. Commute times: Powered by TfL Open Data.
 
 | Area | Count | Available | Let agreed | Median | Min | Max | £/sq ft | ≤30 min | Median ≤30 min | Median shift |
 |---|---|---|---|---|---|---|---|---|---|---|

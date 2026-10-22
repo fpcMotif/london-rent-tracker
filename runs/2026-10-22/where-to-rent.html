@@ -20,6 +20,7 @@
   --central: #dc241f;
   --district: #00782a;
   --walk: #6b7780;
+  --far: #b7c0c4;
   --display: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
   --body: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
@@ -28,13 +29,13 @@
   :root:not([data-theme="light"]) {
     --bg: #11181d; --surface: #182229; --ink: #e6ecee; --muted: #9aa8b0; --line: #2b3a43;
     --accent: #6cc3dc; --accent-soft: #1b3440; --good: #5fcf94; --warn: #e2b54a; --bad: #ef8579;
-    --walk: #9aa8b0; color-scheme: dark;
+    --walk: #9aa8b0; --far: #4a5a63; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #11181d; --surface: #182229; --ink: #e6ecee; --muted: #9aa8b0; --line: #2b3a43;
   --accent: #6cc3dc; --accent-soft: #1b3440; --good: #5fcf94; --warn: #e2b54a; --bad: #ef8579;
-  --walk: #9aa8b0; color-scheme: dark;
+  --walk: #9aa8b0; --far: #4a5a63; color-scheme: dark;
 }
 * { box-sizing: border-box; }
 body {
@@ -83,6 +84,18 @@ tr.hl td { background: var(--accent-soft); }
 .leg.Central { background: var(--central); }
 .leg.District { background: var(--district); }
 .note { font-size: 13px; color: var(--muted); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.legend i.ring { border: 2px solid var(--muted); width: 9px; height: 9px; }
+.legend i.bank { background: var(--bad); border-radius: 2px; transform: rotate(45deg); }
+.mapbox { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px; }
+#map { display: block; width: 100%; height: auto; }
+#map .lbl { font: 600 12px var(--body); fill: var(--ink); paint-order: stroke; stroke: var(--surface); stroke-width: 4px; }
+#map .ring30 { fill: none; stroke: var(--line); stroke-dasharray: 4 4; }
+#map .ringlbl { font: 11px var(--mono); fill: var(--muted); }
+#map a:focus-visible circle { stroke: var(--ink); stroke-width: 2; }
+.pos { color: var(--bad); } .neg { color: var(--good); }
 .caveats { display: grid; gap: 8px; padding-left: 18px; margin: 0; }
 .prompt { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
 .prompt pre { margin: 0; padding: 18px; font-family: var(--mono); font-size: 12.5px; white-space: pre-wrap; word-break: break-word; max-height: 420px; overflow: auto; }
@@ -92,7 +105,7 @@ tr.hl td { background: var(--accent-soft); }
 
 <main>
   <header>
-    <div class="eyebrow">Rent tracker · baseline run 22 Oct 2026 · 624 flats · 2 bed, 2 bath, ≤ £3,000 pcm</div>
+    <div class="eyebrow">Rent tracker · baseline run 22 Oct 2026 · 624 flats · 2 bed, 2 bath, ≤ £3,000 pcm · Commute times: Powered by TfL Open Data</div>
     <h1>Rent in E1, between Whitechapel and Shadwell.</h1>
     <p>This band gives the most reliable commute to 1 Bartholomew Lane. Flats there take 25–27 minutes by Tube or DLR and 6–8 minutes by bike. They cost £2,350–£2,900 for 700–976 sq ft. Canary Wharf east (Blackwall and Poplar) is the backup. It has the most space per pound, but its commute sits close to the 30-minute limit.</p>
   </header>
@@ -128,6 +141,38 @@ tr.hl td { background: var(--accent-soft); }
       </ul>
     </div>
   </div>
+
+  <section>
+    <h2>Where the flats are</h2>
+    <p class="note">Each dot is one of the 624 flats, placed by its own coordinates. Its color is the TfL time to Bank, arriving 08:45. Hover over a dot for its rent, or click it to open the listing. North is up.</p>
+    <div class="legend">
+      <span><i style="background:var(--good)"></i>20 min or less</span>
+      <span><i style="background:var(--accent)"></i>21–30 min</span>
+      <span><i style="background:var(--far)"></i>over 30 min</span>
+      <span><i class="ring"></i>let agreed</span>
+      <span><i class="bank"></i>Bank (your office)</span>
+    </div>
+    <div class="mapbox"><svg id="map" role="img" aria-label="Map of 624 flats coloured by commute time to Bank"></svg></div>
+  </section>
+
+  <section>
+    <h2>Rent review</h2>
+    <p class="note">Two tests. First, each area's asking rents against the ONS average two-bed rent in its borough. The ONS figure averages every current two-bed tenancy, including older leases and one-bath flats, so new two-bath lets normally sit above it. Second, each flat's £ per sq ft against its own area's median, which shows the flats priced below their neighbours.</p>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Area</th><th>Borough (ONS)</th><th class="r">ONS 2-bed avg</th><th class="r">ONS yearly rise</th><th class="r">Median asking</th><th class="r">Asking vs ONS</th><th class="r">Area £/sq ft</th></tr></thead>
+        <tbody id="review"></tbody>
+      </table>
+    </div>
+    <h3 style="font-size:17px">Priced below their neighbours: available, 30 min or less, 10% or more under the area £/sq ft</h3>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Flat</th><th>Area</th><th class="r">£ pcm</th><th class="r">sq ft</th><th class="r">£/sq ft</th><th class="r">vs area</th><th class="r">Transit</th></tr></thead>
+        <tbody id="deals"></tbody>
+      </table>
+    </div>
+    <p class="note" id="dealnote"></p>
+  </section>
 
   <section>
     <h2>The eight areas compared</h2>
@@ -172,6 +217,7 @@ tr.hl td { background: var(--accent-soft); }
   </section>
 </main>
 
+<script src="flats.js"></script>
 <script>
 const AREAS = [
   ["Aldgate / Tower Hill / Whitechapel", 46, 48, 31, 2762, 3.78, 700, 7, 0.33, true],
@@ -254,6 +300,65 @@ Locations (# | name | lat,lng | my TfL transit min | my bike min):
 ${SHORT.map(([addr, , , tr, bike, , lat, lng], i) => `${i + 1} | ${addr} | ${lat},${lng} | ${tr} | ${bike}`).join("\n")}`;
 
 document.getElementById("prompt").textContent = prompt;
+
+const T = window.TRACKER;
+const BANK = [51.5142, -0.0866];
+const SHORTNAME = {
+  "Stratford/East Village": "Stratford", "Aldgate/Tower Hill/Whitechapel": "Aldgate", "Wapping/Shadwell": "Wapping",
+  "Royal Docks/Royal Wharf": "Royal Docks", "Canary Wharf/Isle of Dogs": "Canary Wharf", "Bermondsey/London Bridge": "Bermondsey",
+  "Elephant & Castle": "Elephant", "Shoreditch/Old Street/Islington": "Shoreditch",
+};
+(function drawMap() {
+  const svg = document.getElementById("map");
+  const kx = Math.cos(BANK[0] * Math.PI / 180);
+  const pts = T.flats.map(f => [f[1] * kx, f[0]]);
+  const xs = pts.map(p => p[0]).concat(BANK[1] * kx), ys = pts.map(p => p[1]).concat(BANK[0]);
+  const pad = 0.004, x0 = Math.min(...xs) - pad, x1 = Math.max(...xs) + pad, y0 = Math.min(...ys) - pad, y1 = Math.max(...ys) + pad;
+  const W = 900, H = Math.round(W * (y1 - y0) / (x1 - x0));
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  const px = x => (x - x0) / (x1 - x0) * W, py = y => (y1 - y) / (y1 - y0) * H;
+  const color = t => t == null ? "var(--far)" : t <= 20 ? "var(--good)" : t <= 30 ? "var(--accent)" : "var(--far)";
+  const kmPx = W / ((x1 - x0) * 111.32);
+  let html = "";
+  const bx = px(BANK[1] * kx), by = py(BANK[0]);
+  for (const km of [3, 6, 9]) html += `<circle class="ring30" cx="${bx}" cy="${by}" r="${km * kmPx}"/><text class="ringlbl" x="${bx + 4}" y="${by - km * kmPx - 4}">${km} km</text>`;
+  const order = T.flats.map((f, i) => i).sort((a, b) => (T.flats[b][2] ?? 99) - (T.flats[a][2] ?? 99));
+  for (const i of order) {
+    const [lat, lng, tr, price, sq, avail, area, addr, url] = T.flats[i];
+    const c = color(tr);
+    const tip = `${addr}\n${gbp(price)} pcm${sq ? `, ${sq} sq ft` : ""}\n${tr == null ? "no commute time" : tr + " min to Bank"}${avail ? "" : ", let agreed"}`;
+    html += `<a href="${esc(url)}" target="_blank" rel="noopener"><circle cx="${px(pts[i][0]).toFixed(1)}" cy="${py(pts[i][1]).toFixed(1)}" r="4.5" fill="${avail ? c : "none"}" stroke="${c}" stroke-width="${avail ? 0 : 1.6}" fill-opacity="0.85"><title>${esc(tip)}</title></circle></a>`;
+  }
+  const centres = {};
+  T.flats.forEach((f, i) => { (centres[f[6]] ||= []).push(pts[i]); });
+  for (const [area, ps] of Object.entries(centres)) {
+    const cx = px(ps.reduce((s, p) => s + p[0], 0) / ps.length), cy = py(ps.reduce((s, p) => s + p[1], 0) / ps.length);
+    html += `<text class="lbl" x="${cx.toFixed(0)}" y="${(cy - 12).toFixed(0)}" text-anchor="middle">${esc(SHORTNAME[area] || area)}</text>`;
+  }
+  html += `<rect x="${bx - 6}" y="${by - 6}" width="12" height="12" fill="var(--bad)" transform="rotate(45 ${bx} ${by})"/><text class="lbl" x="${bx + 12}" y="${by + 4}">Bank</text>`;
+  svg.innerHTML = html;
+})();
+
+const BOROUGH = {
+  "Stratford/East Village": ["Newham"], "Aldgate/Tower Hill/Whitechapel": ["Tower Hamlets"], "Wapping/Shadwell": ["Tower Hamlets"],
+  "Royal Docks/Royal Wharf": ["Newham"], "Canary Wharf/Isle of Dogs": ["Tower Hamlets"], "Bermondsey/London Bridge": ["Southwark"],
+  "Elephant & Castle": ["Southwark"], "Shoreditch/Old Street/Islington": ["Hackney", "Islington"],
+};
+const median = xs => { const s = [...xs].sort((a, b) => a - b), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
+const pct = x => `${x > 0 ? "+" : ""}${(x * 100).toFixed(0)}%`;
+document.getElementById("review").innerHTML = Object.keys(BOROUGH).map(area => {
+  const bs = BOROUGH[area].filter(b => T.ons[b]);
+  const ons = bs.reduce((s, b) => s + T.ons[b][0], 0) / bs.length;
+  const rise = bs.reduce((s, b) => s + T.ons[b][1], 0) / bs.length;
+  const ask = median(T.flats.filter(f => f[6] === area).map(f => f[3]));
+  const gap = ask / ons - 1;
+  return `<tr><td>${esc(area.replaceAll("/", " / "))}</td><td>${esc(bs.join(" + "))}</td><td class="r num">${gbp(Math.round(ons))}</td><td class="r num">${rise.toFixed(2)}%</td><td class="r num">${gbp(Math.round(ask))}</td><td class="r num pos">${pct(gap)}</td><td class="r num">${T.area_psf[area] ?? "–"}</td></tr>`;
+}).join("");
+
+const deals = T.flats.filter(f => f[5] && f[2] != null && f[2] <= 30 && f[9] != null && f[9] <= -0.10).sort((a, b) => a[9] - b[9]);
+document.getElementById("deals").innerHTML = deals.slice(0, 15).map(([, , tr, price, sq, , area, addr, url, v]) => `
+  <tr class="${/Aldgate|Wapping/.test(area) ? "hl" : ""}"><td><a href="${esc(url)}" target="_blank" rel="noopener">${esc(addr)}</a></td><td>${esc(SHORTNAME[area])}</td><td class="r num">${gbp(price)}</td><td class="r num">${sq}</td><td class="r num">${(price / sq).toFixed(2)}</td><td class="r num neg">${pct(v)}</td><td class="r num">${tr} min</td></tr>`).join("");
+document.getElementById("dealnote").textContent = `${deals.length} flats pass this test. The table shows the 15 furthest below their area's median. Rows in the first-choice E1 band are shaded. A low £/sq ft can also mean a listing overstates its floor area, so check the floor plan.`;
 const btn = document.getElementById("copy");
 btn.addEventListener("click", () => {
   navigator.clipboard.writeText(prompt).then(() => { btn.textContent = "Copied"; }, () => {

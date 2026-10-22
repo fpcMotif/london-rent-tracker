@@ -47,7 +47,8 @@ def facts(db: sqlite3.Connection, cfg: Config, run_date: str) -> str:
         "",
         (
             "Commute is the fastest Tube/DLR/Elizabeth line journey from each flat, "
-            f"arriving {cfg.destination.arrive_time} on a weekday."
+            f"arriving {cfg.destination.arrive_time} on a weekday. "
+            "Commute times: Powered by TfL Open Data."
         ),
         "",
         f"| Area | Count | Available | Let agreed | Median | Min | Max | £/sq ft | ≤{limit} min | Median ≤{limit} min | Median shift |",
