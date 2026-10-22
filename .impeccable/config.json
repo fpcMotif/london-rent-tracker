@@ -1,0 +1,26 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "low-contrast",
+        "value": "*",
+        "files": [
+          "runs/2026-10-22/where-to-rent.html"
+        ],
+        "createdAt": "2026-10-22T10:53:08.933Z",
+        "reason": "Claude: findings pair dark-theme tokens (#9aa8b0, #182229) with light-theme surfaces; within each theme muted text is >=5.6:1"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "runs/2026-10-22/where-to-rent.html"
+        ],
+        "createdAt": "2026-10-22T11:00:11.411Z",
+        "reason": "Claude: remaining hit is the small route-leg and status pill chips (3-4px vertical, 8-11px horizontal), a deliberate compact chip style; containers use 12-20px"
+      }
+    ]
+  }
+}

@@ -1,0 +1,112 @@
+[target]
+beds = 2
+baths = 2
+max_pcm = 3000
+area_radius_km = 2.0
+
+[destination]
+name = "Agricultural Bank of China London Branch"
+postcode = "EC2N 2AX"
+max_commute_min = 30
+arrive_time = "0845"
+
+[models]
+extract = "claude-haiku-5-5"
+report = "claude-sonnet-5-5"
+
+[browser]
+chrome = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+cdp_port = 9333
+profile_dir = "data/chrome-profile"
+
+[[areas]]
+name = "Stratford/East Village"
+center = [51.544, -0.008]
+rightmove = ["REGION^85312", "REGION^93769"]
+zoopla = ["london/stratford", "london/east-village"]
+openrent = ["Stratford, London", "East Village, London"]
+ons_boroughs = ["Newham"]
+
+[[areas]]
+name = "Aldgate/Tower Hill/Whitechapel"
+center = [51.515, -0.068]
+rightmove = ["REGION^94187", "REGION^85416", "REGION^85210"]
+zoopla = ["london/aldgate@0.5", "london/tower-hill@0.5", "london/whitechapel"]
+openrent = ["Aldgate, London", "Whitechapel, London"]
+ons_boroughs = ["Tower Hamlets", "City of London"]
+
+[[areas]]
+name = "Wapping/Shadwell"
+center = [51.507, -0.058]
+rightmove = ["REGION^85209", "REGION^85207"]
+zoopla = ["wapping", "london/shadwell"]
+openrent = ["Wapping, London", "Shadwell, London"]
+ons_boroughs = ["Tower Hamlets"]
+
+[[areas]]
+name = "Royal Docks/Royal Wharf"
+center = [51.505, 0.025]
+rightmove = ["REGION^93856", "REGION^94313"]
+zoopla = ["london/e16/victoria-docks-canning-town-north-woolwich"]
+openrent = ["Royal Victoria, London", "Pontoon Dock, London"]
+ons_boroughs = ["Newham"]
+
+[[areas]]
+name = "Canary Wharf/Isle of Dogs"
+center = [51.497, -0.018]
+rightmove = ["REGION^85362", "REGION^85364"]
+zoopla = ["canary-wharf", "isle-of-dogs"]
+openrent = ["Canary Wharf, London", "Isle of Dogs, London"]
+ons_boroughs = ["Tower Hamlets"]
+
+[[areas]]
+name = "Bermondsey/London Bridge"
+center = [51.500, -0.075]
+rightmove = ["REGION^85212", "STATION^5792"]
+zoopla = ["bermondsey", "london/london-bridge@0.5"]
+openrent = ["Bermondsey, London", "London Bridge, London"]
+ons_boroughs = ["Southwark"]
+
+[[areas]]
+name = "Elephant & Castle"
+center = [51.494, -0.100]
+rightmove = ["REGION^70312"]
+zoopla = ["london/elephant-and-castle@0.5"]
+openrent = ["Elephant and Castle, London"]
+ons_boroughs = ["Southwark"]
+
+[[areas]]
+name = "Shoreditch/Old Street/Islington"
+center = [51.530, -0.093]
+rightmove = ["REGION^87528", "STATION^6881", "REGION^87515"]
+zoopla = ["london/shoreditch", "ec1v", "london/islington"]
+openrent = ["Shoreditch, London", "Old Street, London", "Islington, London"]
+ons_boroughs = ["Hackney", "Islington"]
+
+[[operators]]
+name = "Get Living"
+urls = ["https://www.getliving.com/find-a-home/?location=london"]
+
+[[operators]]
+name = "Greystar"
+urls = ["https://www.greystar.com/sailmakers---ostro-tower-london-uk/p_15772"]
+
+[[operators]]
+name = "Vertus"
+urls = ["https://thisisvertus.com/find-an-apartment/"]
+
+[[operators]]
+name = "Fizzy"
+urls = ["https://www.fizzyliving.com/find-a-home"]
+
+[[operators]]
+name = "Uncle"
+urls = ["https://uncle.co.uk/london/"]
+
+[[operators]]
+name = "Tipi/Quintain"
+urls = ["https://www.quintainliving.com/search-units"]
+
+[[operators]]
+name = "Moda"
+urls = ["https://modaliving.com/locations/london"]

@@ -1,0 +1,265 @@
+<title>Where to Rent Near Bank</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;700;800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one reading column; verdict first, then the area table, then the shortlist, then the Gemini check. */
+:root {
+  --bg: #f3f5f4;
+  --surface: #ffffff;
+  --ink: #18222a;
+  --muted: #5b6871;
+  --line: #d8dfe0;
+  --accent: #0d5c75;
+  --accent-soft: #dcebef;
+  --good: #1f7a4d;
+  --warn: #9a6a00;
+  --bad: #a33a2f;
+  --dlr: #007a7c;
+  --central: #dc241f;
+  --district: #00782a;
+  --walk: #6b7780;
+  --display: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --body: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11181d; --surface: #182229; --ink: #e6ecee; --muted: #9aa8b0; --line: #2b3a43;
+    --accent: #6cc3dc; --accent-soft: #1b3440; --good: #5fcf94; --warn: #e2b54a; --bad: #ef8579;
+    --walk: #9aa8b0; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11181d; --surface: #182229; --ink: #e6ecee; --muted: #9aa8b0; --line: #2b3a43;
+  --accent: #6cc3dc; --accent-soft: #1b3440; --good: #5fcf94; --warn: #e2b54a; --bad: #ef8579;
+  --walk: #9aa8b0; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 32px 64px;
+}
+main { max-width: 940px; margin: 0 auto; display: grid; gap: 40px; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; line-height: 1.15; }
+h1 { font-size: clamp(30px, 5vw, 46px); font-weight: 800; letter-spacing: -0.02em; }
+h2 { font-size: 21px; font-weight: 700; }
+p { margin: 0; max-width: 68ch; }
+.eyebrow { font-size: 13px; color: var(--muted); font-weight: 500; }
+.num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+a { color: var(--accent); }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+header { display: grid; gap: 12px; }
+header p { color: var(--muted); }
+.verdict { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.pick { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px; display: grid; gap: 10px; align-content: start; }
+.pick.main { border: 2px solid var(--accent); }
+.pick h3 { font-size: 19px; }
+.tag { display: inline-block; font-size: 12px; font-weight: 700; padding: 4px 11px; border-radius: 999px; width: fit-content; }
+.tag.first { background: var(--accent); color: var(--surface); }
+.tag.second { background: var(--accent-soft); color: var(--accent); }
+.tag.skip { background: transparent; color: var(--bad); border: 1px solid var(--bad); }
+.pick ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+.facts { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--muted); }
+.facts b { color: var(--ink); font-family: var(--mono); font-weight: 600; }
+section { display: grid; gap: 14px; }
+.scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th { font-size: 12px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+td.r, th.r { text-align: right; }
+tr:last-child td { border-bottom: 0; }
+tr.hl td { background: var(--accent-soft); }
+.bar { display: flex; align-items: center; gap: 8px; }
+.bar span { display: block; height: 8px; border-radius: 4px; background: var(--accent); }
+.bar.zero span { background: var(--bad); width: 3px !important; }
+.route { display: flex; gap: 4px; flex-wrap: wrap; }
+.leg { font-size: 11px; font-family: var(--mono); padding: 3px 8px; border-radius: 4px; color: #fff; }
+.leg.walk { background: transparent; color: var(--walk); border: 1px solid var(--line); }
+.leg.DLR { background: var(--dlr); }
+.leg.Central { background: var(--central); }
+.leg.District { background: var(--district); }
+.note { font-size: 13px; color: var(--muted); }
+.caveats { display: grid; gap: 8px; padding-left: 18px; margin: 0; }
+.prompt { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+.prompt pre { margin: 0; padding: 18px; font-family: var(--mono); font-size: 12.5px; white-space: pre-wrap; word-break: break-word; max-height: 420px; overflow: auto; }
+.copy { position: absolute; top: 10px; right: 10px; font: 600 13px var(--body); background: var(--accent); color: var(--surface); border: 0; border-radius: 6px; padding: 7px 12px; cursor: pointer; }
+@media (prefers-reduced-motion: no-preference) { .copy { transition: opacity .15s; } .copy:active { opacity: .8; } }
+</style>
+
+<main>
+  <header>
+    <div class="eyebrow">Rent tracker · baseline run 22 Oct 2026 · 624 flats · 2 bed, 2 bath, ≤ £3,000 pcm</div>
+    <h1>Rent in E1, between Whitechapel and Shadwell.</h1>
+    <p>This band gives the most reliable commute to 1 Bartholomew Lane. Flats there take 25–27 minutes by Tube or DLR and 6–8 minutes by bike. They cost £2,350–£2,900 for 700–976 sq ft. Canary Wharf east (Blackwall and Poplar) is the backup. It has the most space per pound, but its commute sits close to the 30-minute limit.</p>
+  </header>
+
+  <div class="verdict">
+    <div class="pick main">
+      <span class="tag first">First choice</span>
+      <h3>E1 / E1W: Christian St, Fletcher St, Plumbers Row, Artichoke Hill</h3>
+      <ul>
+        <li>46 of the 48 Aldgate–Whitechapel flats are within 30 minutes.</li>
+        <li>A bike ride of 6–8 minutes still gets you to work during a strike or a DLR closure.</li>
+        <li>5 of the 14 best-value flats on the shortlist are in this band.</li>
+      </ul>
+      <div class="facts"><span>Median rent ≤30 min <b>£2,762</b></span><span>Median £/sq ft <b>3.78</b></span><span>Median bike <b>7 min</b></span></div>
+    </div>
+    <div class="pick">
+      <span class="tag second">Backup</span>
+      <h3>Canary Wharf east: Blackwall and Poplar, E14</h3>
+      <ul>
+        <li>51 flats within 30 minutes, the most of any area.</li>
+        <li>The lowest cost per sq ft (£3.19) and the largest flats (812 sq ft median).</li>
+        <li>The trips take 26–29 min, using the DLR alone. A bike takes 20+ min.</li>
+      </ul>
+      <div class="facts"><span>Median rent ≤30 min <b>£2,495</b></span><span>Median £/sq ft <b>3.19</b></span><span>Median bike <b>20 min</b></span></div>
+    </div>
+    <div class="pick">
+      <span class="tag skip">Drop</span>
+      <h3>Royal Docks, and most of Stratford and Bermondsey</h3>
+      <ul>
+        <li>Royal Docks: 0 of 128 flats are within 30 minutes. The fastest takes 31.</li>
+        <li>Stratford: 20 of 78 are within 30 minutes, at a median of £2,925 with a 28-min ride.</li>
+        <li>Bermondsey: 60% of its flats were already let agreed, and only 5 that were available are within reach.</li>
+      </ul>
+    </div>
+  </div>
+
+  <section>
+    <h2>The eight areas compared</h2>
+    <p class="note">The figures in the "≤30 min" columns count only flats whose own coordinates give a TfL journey of 30 minutes or less. Journeys arrive at 08:45 on a weekday and use the Tube, DLR or Elizabeth line.</p>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Area</th><th>Flats ≤30 min</th><th class="r">Available</th><th class="r">Median rent</th><th class="r">£/sq ft</th><th class="r">Median sq ft</th><th class="r">Bike</th><th class="r">Let agreed</th></tr></thead>
+        <tbody id="areas"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>What £3,000 buys today: best value within 30 minutes</h2>
+    <p class="note">These are available flats of 600 sq ft or more within 30 minutes, sorted by price per sq ft. They will be gone long before late 2027. Use them as examples of what each street offers, and to check each location.</p>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Flat</th><th class="r">£ pcm</th><th class="r">sq ft</th><th class="r">£/sq ft</th><th class="r">Transit</th><th class="r">Bike</th><th>Route</th></tr></thead>
+        <tbody id="short"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Before you decide</h2>
+    <ul class="caveats">
+      <li>This is one week of asking rents. Prices and medians firm up after 4–6 weekly runs.</li>
+      <li>Room to grow: the E1 median is £238 below your cap, which is 8.6%. The ONS figure for two-bed rents in Tower Hamlets rose 3.66% in the year to September 2026. At that rate the headroom lasts about two years, which is close to late 2027.</li>
+      <li>Shoreditch's Chequer Street flat (EC1Y) is the best value at 18 minutes on foot. It costs the full £3,000, so it leaves no room for a rise.</li>
+      <li>Four listings give impossible floor areas (1–71 sq ft). They are left out of every £/sq ft figure.</li>
+      <li>TfL times use each flat's coordinates rounded to about 100 m. Walking time to the station can differ by a few minutes.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Check it with Gemini and Google Maps</h2>
+    <p class="note">Paste this into Gemini with Google Maps turned on. It checks each street independently against Google's own transit and cycling times.</p>
+    <div class="prompt">
+      <button class="copy" id="copy" type="button">Copy prompt</button>
+      <pre id="prompt"></pre>
+    </div>
+  </section>
+</main>
+
+<script>
+const AREAS = [
+  ["Aldgate / Tower Hill / Whitechapel", 46, 48, 31, 2762, 3.78, 700, 7, 0.33, true],
+  ["Canary Wharf / Isle of Dogs", 51, 150, 34, 2495, 3.19, 812, 20, 0.31, true],
+  ["Wapping / Shadwell", 21, 34, 13, 2475, 3.56, 730, 12, 0.38, false],
+  ["Shoreditch / Old St / Islington", 21, 98, 15, 3000, 3.85, 777, 7, 0.48, false],
+  ["Stratford / East Village", 20, 78, 14, 2925, 3.62, 778, 28, 0.28, false],
+  ["Bermondsey / London Bridge", 16, 68, 5, 2788, 4.03, 719, 6, 0.60, false],
+  ["Elephant & Castle", 5, 20, 2, 2300, null, null, 13, 0.45, false],
+  ["Royal Docks / Royal Wharf", 0, 128, 0, null, null, null, null, 0.34, false],
+];
+const SHORT = [
+  ["Chequer Street, EC1Y", 3000, 1142, 18, 4, "walk 18m", 51.52343, -0.0914, "https://www.zoopla.co.uk/to-rent/details/68488473/"],
+  ["Artichoke Hill, E1W", 2750, 976, 27, 8, "walk 14m > DLR 4m > walk 9m", 51.50894, -0.06325, "https://www.rightmove.co.uk/properties/90639213"],
+  ["Wingfield Court, Newport Ave, E14", 2600, 891, 26, 26, "walk 4m > DLR 13m > walk 9m", 51.50821, -0.002, "https://www.rightmove.co.uk/properties/93794976"],
+  ["Royal Captain Court, Arniston Way, E14", 2800, 914, 26, 23, "walk 5m > DLR 12m > walk 9m", 51.5083, -0.00795, "https://www.rightmove.co.uk/properties/93095697"],
+  ["Meridian Place, E14", 2799, 909, 29, 23, "walk 5m > DLR 15m > walk 9m", 51.50032, -0.01378, "https://www.rightmove.co.uk/properties/94061898"],
+  ["Wharfside Point South, Prestons Rd, E14", 2150, 684, 26, 23, "walk 5m > DLR 12m > walk 9m", 51.50822, -0.00921, "https://www.rightmove.co.uk/properties/93502761"],
+  ["Station Street, E15", 2925, 930, 29, 26, "walk 9m > Central 12m > walk 8m", 51.54003, -0.00146, "https://www.zoopla.co.uk/to-rent/details/72999901/"],
+  ["Settlers Court, Newport Ave, E14", 2100, 657, 27, 29, "walk 5m > DLR 13m > walk 9m", 51.50917, 0.00092, "https://www.rightmove.co.uk/properties/94285038"],
+  ["Colefax Building, Plumbers Row, E1", 2900, 890, 25, 6, "walk 9m > District 5m > walk 11m", 51.51566, -0.06579, "https://www.rightmove.co.uk/properties/94527471"],
+  ["Fletcher Street, E1", 2817, 858, 27, 7, "walk 14m > DLR 4m > walk 9m", 51.51054, -0.06655, "https://www.rightmove.co.uk/properties/94492617"],
+  ["Hodgeson House, Christian St, E1", 2600, 788, 25, 8, "walk 12m > DLR 4m > walk 9m", 51.51198, -0.06387, "https://www.rightmove.co.uk/properties/91877001"],
+  ["White Horse Road, Limehouse, E1", 2400, 722, 28, 17, "walk 13m > DLR 6m > walk 9m", 51.51523, -0.04068, "https://www.zoopla.co.uk/to-rent/details/74503306/"],
+  ["Nijjer House, Commercial Rd, E1", 2350, 700, 25, 8, "walk 12m > DLR 4m > walk 9m", 51.51456, -0.05995, "https://www.rightmove.co.uk/properties/152043551"],
+  ["Horizon Building, Hertsmere Rd, E14", 2750, 818, 24, 21, "walk 5m > DLR 10m > walk 9m", 51.50793, -0.02184, "https://www.rightmove.co.uk/properties/92934480"],
+];
+const E1 = /, E1W?$/;
+const gbp = n => n == null ? "–" : "£" + n.toLocaleString("en-GB");
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+document.getElementById("areas").innerHTML = AREAS.map(([name, near, total, avail, med, psf, sqft, bike, let_, hl]) => `
+  <tr class="${hl ? "hl" : ""}">
+    <td>${esc(name)}</td>
+    <td><div class="bar ${near ? "" : "zero"}"><span style="width:${near * 2}px"></span><span class="num" style="background:none;height:auto">${near} / ${total}</span></div></td>
+    <td class="r num">${avail}</td>
+    <td class="r num">${gbp(med)}</td>
+    <td class="r num">${psf ?? "–"}</td>
+    <td class="r num">${sqft ?? "–"}</td>
+    <td class="r num">${bike == null ? "–" : bike + " min"}</td>
+    <td class="r num">${Math.round(let_ * 100)}%</td>
+  </tr>`).join("");
+
+const legs = route => route.split(" > ").map(l => {
+  const [mode, mins] = l.split(" ");
+  return `<span class="leg ${mode === "walk" ? "walk" : esc(mode)}">${esc(mode)} ${esc(mins)}</span>`;
+}).join("");
+
+document.getElementById("short").innerHTML = SHORT.map(([addr, p, sq, tr, bike, route, , , url]) => `
+  <tr class="${E1.test(addr) ? "hl" : ""}">
+    <td><a href="${esc(url)}" target="_blank" rel="noopener">${esc(addr)}</a></td>
+    <td class="r num">${gbp(p)}</td>
+    <td class="r num">${sq}</td>
+    <td class="r num">${(p / sq).toFixed(2)}</td>
+    <td class="r num">${tr} min</td>
+    <td class="r num">${bike} min</td>
+    <td><div class="route">${legs(route)}</div></td>
+  </tr>`).join("");
+
+const prompt = `You are checking a London flat-hunting shortlist with Google Maps. Use Google Maps directions for every number. Never guess a time. If Maps gives no answer, write "no result".
+
+Destination: Agricultural Bank of China London Branch, 1 Bartholomew Lane, London EC2N 2AX (next to Bank station).
+Arrival: 08:45 on a normal weekday (Tuesday).
+Budget and move-in: 2 bed, 2 bath, up to £3,000 pcm, moving in late 2027.
+
+For each location below (use the lat,lng, not just the street name), report:
+1. Public transport time, door to door, arriving 08:45. Use Tube, DLR, Elizabeth line or Overground only, with no buses. Name the lines and the walk to the first station.
+2. Cycling time and distance.
+3. Walking time to the nearest Tube, DLR or Elizabeth line station, and that station's name.
+4. Whether the point is on or next to a main road, a railway or the DLR viaduct (a noise risk). Use Street View if you need it.
+5. The nearest large supermarket and how far away it is on foot.
+
+Then compare my tracker's TfL times (given below) with Google's. Flag any location where Google's public transport time is over 30 minutes or differs from mine by 5 minutes or more.
+
+Finally, answer in 5 lines or fewer: is "E1 between Whitechapel and Shadwell" the better choice than "Blackwall/Poplar E14" for a reliable commute under 30 minutes? Cite the numbers you found.
+
+Return one table with these columns: #, location, Maps transit min, lines, my TfL min, difference, bike min, nearest station + walk min, noise risk, supermarket.
+
+Locations (# | name | lat,lng | my TfL transit min | my bike min):
+${SHORT.map(([addr, , , tr, bike, , lat, lng], i) => `${i + 1} | ${addr} | ${lat},${lng} | ${tr} | ${bike}`).join("\n")}`;
+
+document.getElementById("prompt").textContent = prompt;
+const btn = document.getElementById("copy");
+btn.addEventListener("click", () => {
+  navigator.clipboard.writeText(prompt).then(() => { btn.textContent = "Copied"; }, () => {
+    const r = document.createRange(); r.selectNodeContents(document.getElementById("prompt"));
+    const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = "Selected, press Copy";
+  });
+  setTimeout(() => { btn.textContent = "Copy prompt"; }, 2000);
+});
+</script>
