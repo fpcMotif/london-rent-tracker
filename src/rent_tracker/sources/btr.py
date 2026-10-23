@@ -123,6 +123,13 @@ def to_listing(
 
 
 Extract = Callable[[int, str], dict]
+OUTSIDE = "outside"
+
+
+def development_postcode(operator: Operator, u: dict) -> str | None:
+    name = " ".join((u.get("development") or "").upper().split())
+    known = {" ".join(k.upper().split()): v for k, v in operator.developments.items()}
+    return known.get(name) or known.get("*")
 
 
 def _extract(model: str, text: str, links: list[str]) -> dict:
@@ -197,6 +204,7 @@ def collect(
         except COLLECT_ERRORS as e:
             notes.append(f"failed: {e}")
         outside = 0
+        unplaced = 0
         baths_unknown = 0
         for u in units:
             if u.get("beds") == target.beds and u.get("baths") is None:
@@ -205,29 +213,42 @@ def collect(
                 not u.get("price")
                 or u.get("beds") != target.beds
                 or u.get("baths") != target.baths
+                or to_pcm(u["price"], u.get("price_period") or "pcm") > target.max_pcm
             ):
                 continue
-            point = (
-                locate_postcode(client, u["postcode"]) if u.get("postcode") else None
-            )
+            postcode = u.get("postcode") or development_postcode(operator, u)
+            if postcode is None:
+                unplaced += 1
+                continue
+            point = None if postcode == OUTSIDE else locate_postcode(client, postcode)
             area = nearest_area(point, areas, target.area_radius_km) if point else None
             if area is None:
                 outside += 1
                 continue
-            listing = to_listing(operator.name, u, page_url, area.name, point)
-            if listing.price_pcm is not None and listing.price_pcm <= target.max_pcm:
-                listings.append(listing)
+            listings.append(
+                to_listing(
+                    operator.name,
+                    {**u, "postcode": postcode},
+                    page_url,
+                    area.name,
+                    point,
+                )
+            )
         if baths_unknown:
             notes.append(
                 f"{baths_unknown} two-bed units dropped because the page shows no bathroom count"
             )
-        if outside:
+        if unplaced:
             notes.append(
-                f"{outside} two-bed units outside the target areas or without a postcode"
+                f"{unplaced} two-bed units dropped because neither the page nor the config gives their postcode"
             )
+        if outside:
+            notes.append(f"{outside} two-bed units outside the target areas")
         status = (
             INCOMPLETE
-            if displayed is None or any(n.startswith("failed") for n in notes)
+            if displayed is None
+            or unplaced
+            or any(n.startswith("failed") for n in notes)
             else coverage_status(displayed, len(units))
         )
         coverage.append(

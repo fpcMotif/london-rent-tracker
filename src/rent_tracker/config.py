@@ -1,5 +1,5 @@
 import tomllib
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 
@@ -33,6 +33,7 @@ class Area:
 class Operator:
     name: str
     urls: list[str]
+    developments: dict[str, str] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)

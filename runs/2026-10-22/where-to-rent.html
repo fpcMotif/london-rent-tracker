@@ -141,7 +141,7 @@ tr.hl td { background: var(--accent-soft); }
 
 <main>
   <header>
-    <div class="eyebrow">Rent tracker · baseline run 22 Oct 2026 · 624 flats · 2 bed, 2 bath, ≤ £3,000 pcm · Commute times: Powered by TfL Open Data</div>
+    <div class="eyebrow">Rent tracker · baseline run 22 Oct 2026 · 634 flats · 2 bed, 2 bath, ≤ £3,000 pcm · Commute times: Powered by TfL Open Data</div>
     <h1>Rent in E1, between Whitechapel and Shadwell.</h1>
     <p>This band gives the most reliable commute to 1 Bartholomew Lane. Flats there take 25–27 minutes by Tube or DLR and 6–8 minutes by bike. They cost £2,350–£2,900 for 700–976 sq ft. Canary Wharf east (Blackwall and Poplar) is the backup. It has the most space per pound, but its commute sits close to the 30-minute limit.</p>
   </header>
@@ -171,7 +171,7 @@ tr.hl td { background: var(--accent-soft); }
       <span class="tag skip">Drop</span>
       <h3>Royal Docks, and most of Stratford and Bermondsey</h3>
       <ul>
-        <li>Royal Docks: 0 of 128 flats are within 30 minutes. The fastest takes 31.</li>
+        <li>Royal Docks: 0 of 138 flats are within 30 minutes. The fastest takes 31.</li>
         <li>Stratford: 20 of 78 are within 30 minutes, at a median of £2,925 with a 28-min ride.</li>
         <li>Bermondsey: 60% of its flats were already let agreed, and only 5 that were available are within reach.</li>
       </ul>
@@ -228,7 +228,7 @@ tr.hl td { background: var(--accent-soft); }
 
   <section>
     <h2>Where the flats are</h2>
-    <p class="note">Each dot is one of the 624 flats, placed by its own coordinates. Its color is the TfL time to Bank, arriving 08:45. Hover over a dot for its rent, or click it to open the listing. North is up.</p>
+    <p class="note">Each dot is one of the 634 flats, placed by its own coordinates. Its color is the TfL time to Bank, arriving 08:45. Hover over a dot for its rent, or click it to open the listing. North is up.</p>
     <div class="legend">
       <span><i style="background:var(--good)"></i>20 min or less</span>
       <span><i style="background:var(--accent)"></i>21–30 min</span>
@@ -236,7 +236,7 @@ tr.hl td { background: var(--accent-soft); }
       <span><i class="ring"></i>let agreed</span>
       <span><i class="bank"></i>Bank (your office)</span>
     </div>
-    <div class="mapbox"><svg id="map" role="img" aria-label="Map of 624 flats coloured by commute time to Bank"></svg></div>
+    <div class="mapbox"><svg id="map" role="img" aria-label="Map of 634 flats coloured by commute time to Bank"></svg></div>
   </section>
 
   <section>
@@ -288,8 +288,8 @@ tr.hl td { background: var(--accent-soft); }
       <li>Shoreditch's Chequer Street flat (EC1Y) is the best value at 18 minutes on foot. It costs the full £3,000, so it leaves no room for a rise.</li>
       <li>Four listings give impossible floor areas (1–71 sq ft). They are left out of every £/sq ft figure.</li>
       <li>TfL times use each flat's coordinates rounded to about 100 m. Walking time to the station can differ by a few minutes.</li>
-      <li>Every DLR route ends with TfL's 9-minute walk from Bank DLR to your office, which covers 297 of the 615 timed flats. Google Maps, through Gemini, gave 3 minutes. The DLR platforms are deep, so the true figure is probably in between. If that walk is 4 minutes shorter, Canary Wharf gains 44 more flats within 30 minutes (51 to 95), Wapping gains 7, and Royal Docks goes from 0 to 13. E1 does not change. Time the walk yourself once, from the DLR platform to the door.</li>
-      <li>The tracker misses some build-to-rent flats. A second price series found 6 Fizzy units in E16 (Vermilion Tower and East 16) at £2,409–£2,885, and the tracker has none of them. It dropped 13 Fizzy and 31 Tipi two-bed units because their pages give no postcode, yet still marked those searches OK.</li>
+      <li>Every DLR route ends with TfL's 9-minute walk from Bank DLR to your office, which covers 307 of the 625 timed flats. Google Maps, through Gemini, gave 3 minutes. The DLR platforms are deep, so the true figure is probably in between. If that walk is 4 minutes shorter, Canary Wharf gains 44 more flats within 30 minutes (51 to 95), Wapping gains 7, and Royal Docks goes from 0 to 23. E1 does not change. Time the walk yourself once, from the DLR platform to the door.</li>
+      <li>Build-to-rent units with no postcode on the page are now placed by their development's known postcode. Fizzy's 10 units at East 16 and Canning Town (E16, £2,409–£2,885) now appear in Royal Docks, each 34 minutes away. A search that still drops a unit for a missing postcode is marked INCOMPLETE. The Vertus, Greystar, Moda and Uncle searches remain INCOMPLETE, so some build-to-rent flats can still be missing.</li>
     </ul>
   </section>
 
@@ -313,7 +313,7 @@ const AREAS = [
   ["Stratford / East Village", 20, 78, 14, 2925, 3.62, 778, 28, 0.28, false],
   ["Bermondsey / London Bridge", 16, 68, 5, 2788, 4.03, 719, 6, 0.60, false],
   ["Elephant & Castle", 5, 20, 2, 2300, null, null, 13, 0.45, false],
-  ["Royal Docks / Royal Wharf", 0, 128, 0, null, null, null, null, 0.34, false],
+  ["Royal Docks / Royal Wharf", 0, 138, 0, null, null, null, null, 0.34, false],
 ];
 const SHORT = [
   ["Chequer Street, EC1Y", 3000, 1142, 18, 4, "walk 18m", 51.52343, -0.0914, "https://www.zoopla.co.uk/to-rent/details/68488473/"],

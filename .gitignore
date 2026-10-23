@@ -14,3 +14,4 @@ runs/*/raw/
 *.log
 .pytest_cache/
 .ruff_cache/
+mise.local.toml

@@ -94,10 +94,12 @@ urls = ["https://www.greystar.com/sailmakers---ostro-tower-london-uk/p_15772"]
 [[operators]]
 name = "Vertus"
 urls = ["https://thisisvertus.com/find-an-apartment/"]
+developments = { "Newfoundland" = "E14 4BJ" }
 
 [[operators]]
 name = "Fizzy"
 urls = ["https://www.fizzyliving.com/find-a-home"]
+developments = { "East 16" = "E16 1JT", "Canning Town" = "E16 1EH", "Hayes" = "outside", "Epsom" = "outside", "Lewisham" = "outside" }
 
 [[operators]]
 name = "Uncle"
@@ -106,6 +108,7 @@ urls = ["https://uncle.co.uk/london/"]
 [[operators]]
 name = "Tipi/Quintain"
 urls = ["https://www.quintainliving.com/search-units"]
+developments = { "*" = "outside" }
 
 [[operators]]
 name = "Moda"
