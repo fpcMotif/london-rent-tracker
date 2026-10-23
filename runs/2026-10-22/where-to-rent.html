@@ -4,7 +4,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;700;800&family=JetBrains+Mono:wght@400;600&display=swap">
 <style>
-/* Layout: one reading column; verdict first, then the area table, then the shortlist, then the Gemini check. */
+/* Layout: one reading column; verdict first, then maps, rents, commute, flat picking and caveats. */
 :root {
   --bg: #f3f5f4;
   --surface: #ffffff;
@@ -129,10 +129,6 @@ tr.hl td { background: var(--accent-soft); }
 .ranking .pts { font: 600 14px var(--mono); text-align: right; }
 @media (max-width: 520px) { .ranking li { grid-template-columns: 2.2ch minmax(0, 1fr) 3.5ch; } .ranking .stack { grid-column: 2 / 4; } }
 .caveats { display: grid; gap: 8px; padding-left: 18px; margin: 0; }
-.prompt { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
-.prompt pre { margin: 0; padding: 18px; font-family: var(--mono); font-size: 12.5px; white-space: pre-wrap; word-break: break-word; max-height: 420px; overflow: auto; }
-.copy { position: absolute; top: 10px; right: 10px; font: 600 13px var(--body); background: var(--accent); color: var(--surface); border: 0; border-radius: 6px; padding: 7px 12px; cursor: pointer; }
-@media (prefers-reduced-motion: no-preference) { .copy { transition: opacity .15s; } .copy:active { opacity: .8; } }
 .d3 { display: block; width: 100%; height: auto; touch-action: pan-y; }
 .d3 text { font-family: var(--body); fill: var(--ink); }
 .d3 .axis text, .d3 .ax { font: 12px var(--mono); fill: var(--muted); }
@@ -188,7 +184,7 @@ footer { border-top: 1px solid var(--line); padding-top: 16px; }
   </header>
 
   <nav class="toc" aria-label="Sections">
-    <a href="#verdict">Verdict</a><a href="#h-dmap">Maps</a><a href="#h-swarm">Rents</a><a href="#h-hist">Commute</a><a href="#h-score">Pick a flat</a><a href="#h-areas">Areas</a><a href="#h-check">Check</a>
+    <a href="#verdict">Verdict</a><a href="#h-dmap">Maps</a><a href="#h-swarm">Rents</a><a href="#h-hist">Commute</a><a href="#h-score">Pick a flat</a><a href="#h-areas">Areas</a>
   </nav>
 
   <div class="verdict" id="verdict">
@@ -383,15 +379,6 @@ footer { border-top: 1px solid var(--line); padding-top: 16px; }
     </ul>
   </section>
 
-  <section aria-labelledby="h-check">
-    <h2 id="h-check">Check it with Gemini and Google Maps</h2>
-    <p class="note">Paste this into Gemini with Google Maps turned on. It checks each street against Google's own transit and cycling times.</p>
-    <div class="prompt">
-      <button class="copy" id="copy" type="button">Copy prompt</button>
-      <pre id="prompt"></pre>
-    </div>
-  </section>
-
   <footer class="note">Commute times: Powered by TfL Open Data. Rents: Rightmove, Zoopla, OpenRent and build-to-rent operators. Official averages: ONS. District outlines: Wikipedia (CC BY-SA), via missinglink/uk-postcode-polygons.</footer>
 </main>
 
@@ -456,30 +443,6 @@ document.getElementById("short").innerHTML = SHORT.map(([addr, p, sq, tr, bike, 
     <td class="r num">${bike} min</td>
     <td><div class="route">${legs(route)}</div></td>
   </tr>`).join("");
-
-const prompt = `You are checking a London flat-hunting shortlist with Google Maps. Use Google Maps directions for every number. Never guess a time. If Maps gives no answer, write "no result".
-
-Destination: Agricultural Bank of China London Branch, 1 Bartholomew Lane, London EC2N 2AX (next to Bank station).
-Arrival: 08:45 on a normal weekday (Tuesday).
-Budget and move-in: 2 bed, 2 bath, up to £3,000 pcm, moving in late 2027.
-
-For each location below (use the lat,lng, not just the street name), report:
-1. Public transport time, door to door, arriving 08:45. Use Tube, DLR, Elizabeth line or Overground only, with no buses. Name the lines and the walk to the first station.
-2. Cycling time and distance.
-3. Walking time to the nearest Tube, DLR or Elizabeth line station, and that station's name.
-4. Whether the point is on or next to a main road, a railway or the DLR viaduct (a noise risk). Use Street View if you need it.
-5. The nearest large supermarket and how far away it is on foot.
-
-Then compare my tracker's TfL times (given below) with Google's. Flag any location where Google's public transport time is over 30 minutes or differs from mine by 5 minutes or more.
-
-Finally, answer in 5 lines or fewer: is "E1 between Whitechapel and Shadwell" the better choice than "Blackwall/Poplar E14" for a reliable commute under 30 minutes? Cite the numbers you found.
-
-Return one table with these columns: #, location, Maps transit min, lines, my TfL min, difference, bike min, nearest station + walk min, noise risk, supermarket.
-
-Locations (# | name | lat,lng | my TfL transit min | my bike min):
-${SHORT.map(([addr, , , tr, bike, , lat, lng], i) => `${i + 1} | ${addr} | ${lat},${lng} | ${tr} | ${bike}`).join("\n")}`;
-
-document.getElementById("prompt").textContent = prompt;
 
 const T = window.TRACKER;
 const BANK = [51.5142, -0.0866];
@@ -616,14 +579,6 @@ ids.forEach(k => document.getElementById("w-" + k).addEventListener("input", ran
 rank();
 
 document.getElementById("dealnote").textContent = `The 15 cheapest of ${deals.length} such flats. Shaded rows are in the first-choice E1 band. A low £ per sq ft can also mean the listing overstates its size, so check the floor plan.`;
-const btn = document.getElementById("copy");
-btn.addEventListener("click", () => {
-  navigator.clipboard.writeText(prompt).then(() => { btn.textContent = "Copied"; }, () => {
-    const r = document.createRange(); r.selectNodeContents(document.getElementById("prompt"));
-    const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = "Selected, press Copy";
-  });
-  setTimeout(() => { btn.textContent = "Copy prompt"; }, 2000);
-});
 </script>
 <script>
 (function d3Views() {
