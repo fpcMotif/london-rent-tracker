@@ -127,10 +127,6 @@ tr.hl td { background: var(--accent-soft); }
 .stack { display: flex; height: 14px; border-radius: 4px; overflow: hidden; background: var(--line); }
 .stack i { display: block; height: 100%; }
 .ranking .pts { font: 600 14px var(--mono); text-align: right; }
-.explain { display: grid; gap: 8px; max-width: 560px; }
-.explain div { display: grid; grid-template-columns: 140px minmax(0, 1fr) 4ch; gap: 10px; align-items: center; font-size: 14px; }
-.explain i { display: block; height: 12px; background: var(--accent); border-radius: 3px; min-width: 2px; }
-.explain b { font-family: var(--mono); text-align: right; }
 @media (max-width: 520px) { .ranking li { grid-template-columns: 2.2ch minmax(0, 1fr) 3.5ch; } .ranking .stack { grid-column: 2 / 4; } }
 .caveats { display: grid; gap: 8px; padding-left: 18px; margin: 0; }
 .prompt { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
@@ -160,99 +156,89 @@ tr.hl td { background: var(--accent-soft); }
 .toolbar label { display: inline-flex; gap: 6px; align-items: center; color: var(--muted); }
 .ghost { font: 500 13px var(--body); color: var(--accent); background: none; border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; cursor: pointer; }
 .scale { display: flex; align-items: center; gap: 8px; font: 12px var(--mono); color: var(--muted); flex-wrap: wrap; }
+.scale { gap: 8px 16px; }
+.scale b { font: 600 13px var(--body); color: var(--ink); }
+.scale .grp { display: inline-flex; align-items: center; gap: 8px; }
 .scale .steps { display: flex; gap: 2px; }
 .scale .steps i { width: 34px; height: 10px; display: block; border-radius: 2px; }
 .scale .steps i.none { background: var(--bg); border: 1px solid var(--line); }
+.read { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px 20px; margin: 4px 0 0; padding: 14px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; font-size: 13px; }
+.read dt { font-weight: 700; }
+.read dd { margin: 2px 0 0; color: var(--muted); }
+.toc { position: sticky; top: 0; z-index: 5; display: flex; gap: 4px; overflow-x: auto; padding: 8px 0; background: var(--bg); border-bottom: 1px solid var(--line); scrollbar-width: none; }
+.toc a { flex: none; font-size: 13px; font-weight: 500; color: var(--muted); text-decoration: none; padding: 6px 12px; border-radius: 999px; }
+.toc a:hover { background: var(--accent-soft); color: var(--accent); }
+[id] { scroll-margin-top: 64px; }
+footer { border-top: 1px solid var(--line); padding-top: 16px; }
 #tip { position: fixed; z-index: 10; pointer-events: none; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; font-size: 13px; line-height: 1.4; box-shadow: 0 4px 14px rgb(0 0 0 / .12); max-width: 280px; opacity: 0; }
 #tip b { font-family: var(--mono); }
 #tip small { color: var(--muted); display: block; }
 </style>
 
 <main>
-  <header>
-    <div class="eyebrow">Rent tracker · baseline run 22 Oct 2026 · 634 flats · 2 bed, 2 bath, ≤ £3,000 pcm · Commute times: Powered by TfL Open Data</div>
+  <header id="top">
+    <div class="eyebrow">Listings from 22 Oct 2026 · 634 flats · 2 bed, 2 bath · up to £3,000 a month</div>
     <h1>Rent in E1, between Whitechapel and Shadwell.</h1>
     <p>This band gives the most reliable commute to 1 Bartholomew Lane. Flats there take 25–27 minutes by Tube or DLR and 6–8 minutes by bike. They cost £2,350–£2,900 for 700–976 sq ft. Canary Wharf east (Blackwall and Poplar) is the backup. It has the most space per pound, but its commute sits close to the 30-minute limit.</p>
+    <dl class="read">
+      <div><dt>Commute</dt><dd>Door to door to 1 Bartholomew Lane, arriving 08:45 on a weekday, by Tube, DLR or Elizabeth line.</dd></div>
+      <div><dt>Typical</dt><dd>The median: half the flats are below it and half above.</dd></div>
+      <div><dt>£ per sq ft</dt><dd>Rent divided by floor area. Lower means more space for the money.</dd></div>
+    </dl>
   </header>
 
-  <div class="verdict">
+  <nav class="toc" aria-label="Sections">
+    <a href="#verdict">Verdict</a><a href="#h-dmap">Maps</a><a href="#h-swarm">Rents</a><a href="#h-hist">Commute</a><a href="#h-score">Pick a flat</a><a href="#h-areas">Areas</a><a href="#h-check">Check</a>
+  </nav>
+
+  <div class="verdict" id="verdict">
     <div class="pick main">
       <span class="tag first">First choice</span>
       <h3>E1 / E1W: Christian St, Fletcher St, Plumbers Row, Artichoke Hill</h3>
       <ul>
         <li>46 of the 48 Aldgate–Whitechapel flats are within 30 minutes.</li>
         <li>A bike ride of 6–8 minutes still gets you to work during a strike or a DLR closure.</li>
-        <li>5 of the 14 best-value flats on the shortlist are in this band.</li>
+        <li>5 of the 14 best-value flats are in this band.</li>
       </ul>
-      <div class="facts"><span>Median rent ≤30 min <b>£2,762</b></span><span>Median £/sq ft <b>3.78</b></span><span>Median bike <b>7 min</b></span></div>
+      <div class="facts"><span>Typical rent <b>£2,762</b></span><span><b>£3.78</b> per sq ft</span><span>Bike <b>7 min</b></span></div>
     </div>
     <div class="pick">
       <span class="tag second">Backup</span>
       <h3>Canary Wharf east: Blackwall and Poplar, E14</h3>
       <ul>
         <li>51 flats within 30 minutes, the most of any area.</li>
-        <li>The lowest cost per sq ft (£3.19) and the largest flats (812 sq ft median).</li>
-        <li>The trips take 26–29 min, using the DLR alone. A bike takes 20+ min.</li>
+        <li>The lowest price per sq ft (£3.19) and the largest flats (812 sq ft typical).</li>
+        <li>Trips take 26–29 minutes on the DLR alone. A bike takes 20 minutes or more.</li>
       </ul>
-      <div class="facts"><span>Median rent ≤30 min <b>£2,495</b></span><span>Median £/sq ft <b>3.19</b></span><span>Median bike <b>20 min</b></span></div>
+      <div class="facts"><span>Typical rent <b>£2,495</b></span><span><b>£3.19</b> per sq ft</span><span>Bike <b>20 min</b></span></div>
     </div>
     <div class="pick">
       <span class="tag skip">Drop</span>
       <h3>Royal Docks, and most of Stratford and Bermondsey</h3>
       <ul>
         <li>Royal Docks: 0 of 138 flats are within 30 minutes. The fastest takes 31.</li>
-        <li>Stratford: 20 of 78 are within 30 minutes, at a median of £2,925 with a 28-min ride.</li>
-        <li>Bermondsey: 60% of its flats were already let agreed, and only 5 that were available are within reach.</li>
+        <li>Stratford: 20 of 78 are within 30 minutes, at a typical £2,925 and a 28-minute trip.</li>
+        <li>Bermondsey: 60% of its flats were already let, and only 5 available ones are within reach.</li>
       </ul>
     </div>
   </div>
 
-  <section aria-labelledby="h-districts">
-    <h2 id="h-districts">Districts at a glance</h2>
-    <p class="note">Each bubble is one postcode district. Further left means a shorter commute, lower down means cheaper rent, and a bigger bubble means more flats. The best place to be is the shaded corner: 30 minutes or less, and below the £2,750 middle of your budget. Districts with fewer than 4 flats are left out of the chart but kept in the table.</p>
-    <div class="mapbox"><svg id="bubbles" role="img" aria-labelledby="bubbles-title bubbles-desc"><title id="bubbles-title">Median rent against median commute for each postcode district</title><desc id="bubbles-desc">E1 and E1W are the only large districts inside the 30-minute line. E14 and E16 have the most flats but sit beyond it. The table below lists every value.</desc></svg></div>
-    <div class="scroll">
-      <table>
-        <caption class="sr">Postcode districts sorted by median commute</caption>
-        <thead><tr><th>District</th><th>Neighbourhood</th><th class="r">Flats</th><th class="r">Median rent</th><th>Median commute</th><th class="r">Share ≤30 min</th><th class="r">Median bike</th></tr></thead>
-        <tbody id="districts"></tbody>
-      </table>
+  <section aria-labelledby="h-dmap">
+    <h2 id="h-dmap">District map</h2>
+    <p class="note">Each postcode district is shaded by the measure you pick. Hover over a district for its numbers. Scroll or pinch to zoom, and drag to move.</p>
+    <div class="toolbar">
+      <div class="seg" role="group" aria-label="Shade districts by">
+        <button type="button" data-m="near" aria-pressed="true">Within 30 min</button>
+        <button type="button" data-m="time" aria-pressed="false">Commute</button>
+        <button type="button" data-m="rent" aria-pressed="false">Rent</button>
+        <button type="button" data-m="n" aria-pressed="false">Number of flats</button>
+      </div>
+      <label><input type="checkbox" id="dflats"> Show each flat</label>
+      <button type="button" class="ghost" id="dreset">Reset zoom</button>
     </div>
-  </section>
-
-  <section aria-labelledby="h-score">
-    <h2 id="h-score">Your value score</h2>
-    <p class="note">This scores every available flat that is 30 minutes or less from Bank and has a known floor area. Each flat gets 0–100 points for price (cheapest = 100), commute (fastest = 100) and space (largest = 100). Move the sliders to say how much each one matters to you. The bar shows where each flat's score comes from.</p>
-    <div class="equation" aria-live="polite" id="equation"></div>
-    <div class="sliders">
-      <label for="w-price"><span class="sw" style="background:var(--c-price)"></span>Price <output id="o-price">40</output>%</label>
-      <input type="range" id="w-price" min="0" max="100" step="5" value="40">
-      <label for="w-time"><span class="sw" style="background:var(--c-time)"></span>Commute <output id="o-time">35</output>%</label>
-      <input type="range" id="w-time" min="0" max="100" step="5" value="35">
-      <label for="w-space"><span class="sw" style="background:var(--c-space)"></span>Space <output id="o-space">25</output>%</label>
-      <input type="range" id="w-space" min="0" max="100" step="5" value="25">
-    </div>
-    <ol class="ranking" id="ranking"></ol>
-    <p class="note" id="scorenote"></p>
-  </section>
-
-  <section aria-labelledby="h-drivers">
-    <h2 id="h-drivers">What sets the rent</h2>
-    <p class="note">This fits one equation to the 260 flats that have both a floor area and a commute time:</p>
-    <div class="equation big">
-      Rent ≈ <b>£2,490</b> <span class="op">+</span> <b class="t-space">£0.57</b> × sq ft <span class="op">−</span> <b class="t-time">£8</b> × minutes to Bank
-    </div>
-    <div class="facts" style="font-size:14px">
-      <span>An extra <b>100 sq ft</b> adds about <b>£57</b> a month.</span>
-      <span>Each minute <b>closer to Bank</b> adds about <b>£8</b> a month.</span>
-    </div>
-    <p>The equation is weak. Size and commute together explain only 12% of the differences in rent, and a typical flat sits £255 away from its prediction. Your £3,000 cap packs every rent into a narrow band, so the building and the listing matter more than any formula. Knowing the district explains a little more than size and commute, but most of the spread stays unexplained:</p>
-    <div class="explain" role="img" aria-label="Share of rent differences explained: postcode district 17 percent, size and commute 12 percent, tracker area 10 percent">
-      <div><span>Postcode district</span><i style="width:17%"></i><b>17%</b></div>
-      <div><span>Size + commute</span><i style="width:12%"></i><b>12%</b></div>
-      <div><span>Tracker area</span><i style="width:10%"></i><b>10%</b></div>
-    </div>
-    <p>In practice, choose the district for its commute, then look for the flats priced below their neighbours. The rent review below lists them.</p>
+    <div class="scale" id="dscale"></div>
+    <div class="mapbox"><svg id="dmap" class="d3" role="img" aria-label="Postcode districts shaded by the chosen measure. The districts table lists every value."></svg></div>
+    <p class="note">A dashed outline means fewer than 4 flats, too few to rely on. District outlines are approximate (Wikipedia, CC BY-SA).</p>
   </section>
 
   <section>
@@ -268,40 +254,53 @@ tr.hl td { background: var(--accent-soft); }
     <div class="mapbox"><svg id="map" role="img" aria-label="Map of 634 flats coloured by commute time to Bank"></svg></div>
   </section>
 
-  <section aria-labelledby="h-dmap">
-    <h2 id="h-dmap">District map</h2>
-    <p class="note">The same flats grouped by postcode district, drawn on the district outlines. Pick what the shading shows. Hover over a district for its numbers. Scroll or pinch to zoom, and drag to move. The map above stays as it was, so you can compare the two.</p>
-    <div class="toolbar">
-      <div class="seg" role="group" aria-label="Shade districts by">
-        <button type="button" data-m="near" aria-pressed="true">Share ≤30 min</button>
-        <button type="button" data-m="time" aria-pressed="false">Median commute</button>
-        <button type="button" data-m="rent" aria-pressed="false">Median rent</button>
-        <button type="button" data-m="n" aria-pressed="false">Flats</button>
-      </div>
-      <label><input type="checkbox" id="dflats"> Show flats</label>
-      <button type="button" class="ghost" id="dreset">Reset zoom</button>
+  <section aria-labelledby="h-districts">
+    <h2 id="h-districts">Districts at a glance</h2>
+    <p class="note">Each bubble is a postcode district. Left is a shorter commute, lower is cheaper, and bigger means more flats. The shaded corner is where you want to be. Districts with fewer than 4 flats appear only in the table.</p>
+    <div class="mapbox"><svg id="bubbles" role="img" aria-labelledby="bubbles-title bubbles-desc"><title id="bubbles-title">Typical rent against typical commute for each postcode district</title><desc id="bubbles-desc">E1 and E1W are the only large districts inside the 30-minute line. E14 and E16 have the most flats but sit beyond it. The table below lists every value.</desc></svg></div>
+    <div class="scroll">
+      <table>
+        <caption class="sr">Postcode districts sorted by typical commute</caption>
+        <thead><tr><th>District</th><th>Neighbourhood</th><th class="r">Flats</th><th class="r">Typical rent</th><th>Typical commute</th><th class="r">Within 30 min</th><th class="r">By bike</th></tr></thead>
+        <tbody id="districts"></tbody>
+      </table>
     </div>
-    <div class="scale" id="dscale"></div>
-    <div class="mapbox"><svg id="dmap" class="d3" role="img" aria-label="Postcode districts shaded by the chosen measure. The districts table above lists every value."></svg></div>
-    <p class="note">District outlines: Wikipedia's postcode district maps (CC BY-SA), via missinglink/uk-postcode-polygons. They are approximate, so a flat near a boundary can look misplaced. Each flat keeps the district from its own listing. A dashed outline means fewer than 4 flats.</p>
   </section>
 
   <section aria-labelledby="h-swarm">
     <h2 id="h-swarm">Every rent, by area</h2>
-    <p class="note">Each dot is one flat. Its color is the commute band from the map, and the black tick is the area's median rent. Hover over a dot for details, or click it to open the listing.</p>
-    <div class="legend">
+    <p class="note">Each dot is one flat, and the black line is the area's typical rent. Hover over a dot for details, or click it to open the listing.</p>
+    <div class="legend" id="bands">
       <span><i style="background:var(--good)"></i>20 min or less</span>
       <span><i style="background:var(--accent)"></i>21–30 min</span>
-      <span><i style="background:var(--far)"></i>over 30 min or untimed</span>
-      <span><i class="ring"></i>let agreed</span>
+      <span><i style="background:var(--far)"></i>over 30 min or no time</span>
+      <span><i class="ring"></i>already let</span>
     </div>
-    <div class="mapbox"><svg id="swarm" class="d3" role="img" aria-label="Rent of every flat, one row per area. The eight areas compared table lists the medians."></svg></div>
+    <div class="mapbox"><svg id="swarm" class="d3" role="img" aria-label="Rent of every flat, one row per area. The areas table lists the typical values."></svg></div>
   </section>
 
   <section aria-labelledby="h-scatter">
     <h2 id="h-scatter">Rent against floor area</h2>
-    <p class="note" id="scatternote">Flats with a stated floor area. The line is the straight-line trend of rent on size alone.</p>
-    <div class="mapbox"><svg id="scatter" class="d3" role="img" aria-label="Rent against floor area for flats with a stated size, coloured by commute band"></svg></div>
+    <p class="note" id="scatternote"></p>
+    <div class="legend">
+      <span><i style="background:var(--good)"></i>20 min or less</span>
+      <span><i style="background:var(--accent)"></i>21–30 min</span>
+      <span><i style="background:var(--far)"></i>over 30 min or no time</span>
+      <span><i class="ring"></i>already let</span>
+    </div>
+    <div class="mapbox"><svg id="scatter" class="d3" role="img" aria-label="Rent against floor area for flats with a stated size, coloured by commute"></svg></div>
+  </section>
+
+  <section aria-labelledby="h-drivers">
+    <h2 id="h-drivers">What sets the rent</h2>
+    <div class="equation big">
+      Rent ≈ <b>£2,490</b> <span class="op">+</span> <b class="t-space">£0.57</b> × sq ft <span class="op">−</span> <b class="t-time">£8</b> × minutes to Bank
+    </div>
+    <div class="facts" style="font-size:14px">
+      <span>An extra <b>100 sq ft</b> adds about <b>£57</b> a month.</span>
+      <span>Each minute <b>closer to Bank</b> adds about <b>£8</b> a month.</span>
+    </div>
+    <p>Size and commute explain only a small part of the price: a typical flat is £255 away from what this formula predicts. The building and the listing matter more. So choose the district for its commute, then compare flats on the same streets.</p>
   </section>
 
   <section aria-labelledby="h-hist">
@@ -309,45 +308,64 @@ tr.hl td { background: var(--accent-soft); }
     <p class="note" id="histnote"></p>
     <div class="mapbox"><svg id="hist" class="d3" role="img" aria-label="Number of flats by minutes to Bank, by public transport and by bike"></svg></div>
   </section>
-  <div id="tip" role="status" aria-live="polite"></div>
+
+  <section aria-labelledby="h-score">
+    <h2 id="h-score">Rank the flats your way</h2>
+    <p class="note">Move the sliders to say what matters most. Every available flat within 30 minutes that states its size gets up to 100 points: the cheapest, fastest and largest score highest.</p>
+    <div class="equation" aria-live="polite" id="equation"></div>
+    <div class="sliders">
+      <label for="w-price"><span class="sw" style="background:var(--c-price)"></span>Price <output id="o-price">40</output>%</label>
+      <input type="range" id="w-price" min="0" max="100" step="5" value="40">
+      <label for="w-time"><span class="sw" style="background:var(--c-time)"></span>Commute <output id="o-time">35</output>%</label>
+      <input type="range" id="w-time" min="0" max="100" step="5" value="35">
+      <label for="w-space"><span class="sw" style="background:var(--c-space)"></span>Space <output id="o-space">25</output>%</label>
+      <input type="range" id="w-space" min="0" max="100" step="5" value="25">
+    </div>
+    <ol class="ranking" id="ranking"></ol>
+    <p class="note" id="scorenote"></p>
+  </section>
 
   <section>
-    <h2>Rent review</h2>
-    <p class="note">Two tests. First, each area's asking rents against the ONS average two-bed rent in its borough. The ONS figure averages every current two-bed tenancy, including older leases and one-bath flats, so new two-bath lets normally sit above it. Second, each flat's £ per sq ft against its own area's median, which shows the flats priced below their neighbours.</p>
+    <h2>Most space for the money, within 30 minutes</h2>
+    <p class="note">Available flats of 600 sq ft or more, sorted by £ per sq ft. They will be let long before late 2027, so use them as examples of what each street offers.</p>
     <div class="scroll">
       <table>
-        <thead><tr><th>Area</th><th>Borough (ONS)</th><th class="r">ONS 2-bed avg</th><th class="r">ONS yearly rise</th><th class="r">Median asking</th><th class="r">Asking vs ONS</th><th class="r">Area £/sq ft</th></tr></thead>
-        <tbody id="review"></tbody>
+        <thead><tr><th>Flat</th><th class="r">Rent</th><th class="r">Sq ft</th><th class="r">£ per sq ft</th><th class="r">Commute</th><th class="r">Bike</th><th>Route</th></tr></thead>
+        <tbody id="short"></tbody>
       </table>
     </div>
-    <h3 style="font-size:17px">Priced below their neighbours: available, 30 min or less, 10% or more under the area £/sq ft</h3>
+  </section>
+
+  <section>
+    <h2>Cheaper than their neighbours</h2>
+    <p class="note">Available flats within 30 minutes whose £ per sq ft is at least 10% below their area's typical figure.</p>
     <div class="scroll">
       <table>
-        <thead><tr><th>Flat</th><th>Area</th><th class="r">£ pcm</th><th class="r">sq ft</th><th class="r">£/sq ft</th><th class="r">vs area</th><th class="r">Transit</th></tr></thead>
+        <thead><tr><th>Flat</th><th>Area</th><th class="r">Rent</th><th class="r">Sq ft</th><th class="r">£ per sq ft</th><th class="r">Below area</th><th class="r">Commute</th></tr></thead>
         <tbody id="deals"></tbody>
       </table>
     </div>
     <p class="note" id="dealnote"></p>
   </section>
 
-  <section>
-    <h2>The eight areas compared</h2>
-    <p class="note">The figures in the "≤30 min" columns count only flats whose own coordinates give a TfL journey of 30 minutes or less. Journeys arrive at 08:45 on a weekday and use the Tube, DLR or Elizabeth line.</p>
+  <section aria-labelledby="h-areas">
+    <h2 id="h-areas">The eight areas compared</h2>
+    <p class="note">"Within 30 min" counts flats whose own location gives a TfL journey of 30 minutes or less.</p>
     <div class="scroll">
       <table>
-        <thead><tr><th>Area</th><th>Flats ≤30 min</th><th class="r">Available</th><th class="r">Median rent</th><th class="r">£/sq ft</th><th class="r">Median sq ft</th><th class="r">Bike</th><th class="r">Let agreed</th></tr></thead>
+        <thead><tr><th>Area</th><th>Within 30 min</th><th class="r">Available</th><th class="r">Typical rent</th><th class="r">£ per sq ft</th><th class="r">Typical sq ft</th><th class="r">Bike</th><th class="r">Already let</th></tr></thead>
         <tbody id="areas"></tbody>
       </table>
     </div>
   </section>
 
   <section>
-    <h2>What £3,000 buys today: best value within 30 minutes</h2>
-    <p class="note">These are available flats of 600 sq ft or more within 30 minutes, sorted by price per sq ft. They will be gone long before late 2027. Use them as examples of what each street offers, and to check each location.</p>
+    <h2>Asking rents against the official average</h2>
+    <p class="note">The ONS average covers every current two-bed tenancy, including older leases and one-bath flats. So new two-bath lets normally sit above it.</p>
     <div class="scroll">
       <table>
-        <thead><tr><th>Flat</th><th class="r">£ pcm</th><th class="r">sq ft</th><th class="r">£/sq ft</th><th class="r">Transit</th><th class="r">Bike</th><th>Route</th></tr></thead>
-        <tbody id="short"></tbody>
+        <thead><tr><th>Area</th><th>Borough</th><th class="r">ONS 2-bed average</th><th class="r">Change in a year</th><th class="r">Typical asking rent</th><th class="r">Asking vs ONS</th><th class="r">£ per sq ft</th></tr></thead>
+        <tbody id="review"></tbody>
       </table>
     </div>
   </section>
@@ -355,24 +373,26 @@ tr.hl td { background: var(--accent-soft); }
   <section>
     <h2>Before you decide</h2>
     <ul class="caveats">
-      <li>This is one week of asking rents. Prices and medians firm up after 4–6 weekly runs.</li>
-      <li>Room to grow: the E1 median is £238 below your cap, which is 8.6%. The ONS figure for two-bed rents in Tower Hamlets rose 3.66% in the year to September 2026. At that rate the headroom lasts about two years, which is close to late 2027.</li>
+      <li>This is one week of asking rents. The figures firm up after 4–6 weekly runs.</li>
+      <li>The E1 typical rent is £238 (8.6%) below your cap. ONS two-bed rents in Tower Hamlets rose 3.66% in the year to September 2026.</li>
       <li>Shoreditch's Chequer Street flat (EC1Y) is the best value at 18 minutes on foot. It costs the full £3,000, so it leaves no room for a rise.</li>
-      <li>Four listings give impossible floor areas (1–71 sq ft). They are left out of every £/sq ft figure.</li>
-      <li>TfL times use each flat's coordinates rounded to about 100 m. Walking time to the station can differ by a few minutes.</li>
-      <li>Every DLR route ends with TfL's 9-minute walk from Bank DLR to your office, which covers 307 of the 625 timed flats. Google Maps, through Gemini, gave 3 minutes. The DLR platforms are deep, so the true figure is probably in between. If that walk is 4 minutes shorter, Canary Wharf gains 44 more flats within 30 minutes (51 to 95), Wapping gains 7, and Royal Docks goes from 0 to 23. E1 does not change. Time the walk yourself once, from the DLR platform to the door.</li>
-      <li>Build-to-rent units with no postcode on the page are now placed by their development's known postcode. Fizzy's 10 units at East 16 and Canning Town (E16, £2,409–£2,885) now appear in Royal Docks, each 34 minutes away. A search that still drops a unit for a missing postcode is marked INCOMPLETE. The Vertus, Greystar, Moda and Uncle searches remain INCOMPLETE, so some build-to-rent flats can still be missing.</li>
+      <li>Four listings give impossible floor areas (1–71 sq ft). They are left out of every £ per sq ft figure.</li>
+      <li>TfL times use each flat's location rounded to about 100 m. Walking time to the station can differ by a few minutes.</li>
+      <li>Every DLR route ends with TfL's 9-minute walk from Bank DLR to your office, which covers 307 of the 625 timed flats. Google Maps, through Gemini, gave 3 minutes. If that walk is 4 minutes shorter, Canary Wharf gains 44 flats within 30 minutes (51 to 95), Wapping gains 7, and Royal Docks goes from 0 to 23. E1 does not change. Time the walk yourself once, from the DLR platform to the door.</li>
+      <li>Some build-to-rent flats can still be missing. The Vertus, Greystar, Moda and Uncle pages could not be fully checked.</li>
     </ul>
   </section>
 
-  <section>
-    <h2>Check it with Gemini and Google Maps</h2>
-    <p class="note">Paste this into Gemini with Google Maps turned on. It checks each street independently against Google's own transit and cycling times.</p>
+  <section aria-labelledby="h-check">
+    <h2 id="h-check">Check it with Gemini and Google Maps</h2>
+    <p class="note">Paste this into Gemini with Google Maps turned on. It checks each street against Google's own transit and cycling times.</p>
     <div class="prompt">
       <button class="copy" id="copy" type="button">Copy prompt</button>
       <pre id="prompt"></pre>
     </div>
   </section>
+
+  <footer class="note">Commute times: Powered by TfL Open Data. Rents: Rightmove, Zoopla, OpenRent and build-to-rent operators. Official averages: ONS. District outlines: Wikipedia (CC BY-SA), via missinglink/uk-postcode-polygons.</footer>
 </main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
@@ -553,8 +573,8 @@ document.getElementById("districts").innerHTML = DIST.map(d => `
   s += `<text class="axis" x="${x(xMin) + 8}" y="${y(yMin) - 10}">quicker and cheaper</text>`;
   for (let v = 2400; v <= 3000; v += 100) s += `<line class="grid" x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}"/><text class="axis" x="${L - 8}" y="${y(v) + 4}" text-anchor="end">£${v.toLocaleString("en-GB")}</text>`;
   for (let v = 20; v <= 50; v += 5) s += `<text class="axis" x="${x(v)}" y="${H - B + 20}" text-anchor="middle">${v}</text>`;
-  s += `<text class="axis" x="${(L + W - R) / 2}" y="${H - 8}" text-anchor="middle">median minutes to Bank by Tube, DLR or Elizabeth line</text>`;
-  s += `<line class="limit" x1="${x(30)}" x2="${x(30)}" y1="${TOP}" y2="${H - B}"/><text class="axis" x="${x(30) + 6}" y="${TOP + 12}">your 30-min limit</text>`;
+  s += `<text class="axis" x="${(L + W - R) / 2}" y="${H - 8}" text-anchor="middle">typical minutes to Bank</text>`;
+  s += `<line class="limit" x1="${x(30)}" x2="${x(30)}" y1="${TOP}" y2="${H - B}"/><text class="axis" x="${x(30) - 6}" y="${TOP + 12}" text-anchor="end">30-min limit</text>`;
   const placed = [];
   for (const d of [...pts].sort((a, b) => b.n - a.n)) {
     const cx = x(d.time), cy = y(d.rent), rr = r(d.n);
@@ -581,7 +601,7 @@ function rank() {
   const total = raw.reduce((a, b) => a + b, 0) || 1;
   const w = raw.map(v => v / total);
   document.getElementById("equation").innerHTML =
-    `Score = <b class="t-price">${Math.round(w[0] * 100)}%</b> × price points <span class="op">+</span> <b class="t-time">${Math.round(w[1] * 100)}%</b> × commute points <span class="op">+</span> <b class="t-space">${Math.round(w[2] * 100)}%</b> × space points`;
+    `Score = <b class="t-price">${Math.round(w[0] * 100)}%</b> price <span class="op">+</span> <b class="t-time">${Math.round(w[1] * 100)}%</b> commute <span class="op">+</span> <b class="t-space">${Math.round(w[2] * 100)}%</b> space`;
   const scored = POOL.map(f => {
     const pts = [part(f[3], pLo, pHi, true), part(f[2], tLo, tHi, true), part(f[4], sLo, sHi, false)].map((p, i) => p * w[i]);
     return { f, pts, score: pts.reduce((a, b) => a + b, 0) };
@@ -590,12 +610,12 @@ function rank() {
     <li><span class="who"><a href="${esc(f[8])}" target="_blank" rel="noopener">${esc(f[7])}</a><small>${gbp(f[3])} · ${f[4]} sq ft · ${f[2]} min · ${esc(f[10] || "")}</small></span>
     <span class="stack" role="img" aria-label="price ${Math.round(pts[0])}, commute ${Math.round(pts[1])}, space ${Math.round(pts[2])} points">${pts.map((p, i) => `<i style="width:${p}%;background:var(--c-${ids[i]})"></i>`).join("")}</span>
     <span class="pts">${Math.round(score)}</span></li>`).join("");
-  document.getElementById("scorenote").textContent = `${POOL.length} flats are scored. Ranges: rent ${gbp(pLo)}–${gbp(pHi)}, commute ${tLo}–${tHi} min, size ${sLo}–${sHi} sq ft. A full bar would be 100 points.`;
+  document.getElementById("scorenote").textContent = `Top 10 of ${POOL.length} flats. They range from ${gbp(pLo)} to ${gbp(pHi)}, ${tLo} to ${tHi} min, and ${sLo} to ${sHi} sq ft.`;
 }
 ids.forEach(k => document.getElementById("w-" + k).addEventListener("input", rank));
 rank();
 
-document.getElementById("dealnote").textContent = `${deals.length} flats pass this test. The table shows the 15 furthest below their area's median. Rows in the first-choice E1 band are shaded. A low £/sq ft can also mean a listing overstates its floor area, so check the floor plan.`;
+document.getElementById("dealnote").textContent = `The 15 cheapest of ${deals.length} such flats. Shaded rows are in the first-choice E1 band. A low £ per sq ft can also mean the listing overstates its size, so check the floor plan.`;
 const btn = document.getElementById("copy");
 btn.addEventListener("click", () => {
   navigator.clipboard.writeText(prompt).then(() => { btn.textContent = "Copied"; }, () => {
@@ -624,10 +644,10 @@ btn.addEventListener("click", () => {
   // District map
   const DSTAT = Object.fromEntries(DIST.map(d => [d.code, d]));
   const METRICS = {
-    near: { label: "share of timed flats ≤30 min", get: d => d.near, fmt: v => `${Math.round(v * 100)}%` },
-    time: { label: "median minutes to Bank", get: d => d.time, fmt: v => `${Math.round(v)} min` },
-    rent: { label: "median rent", get: d => d.rent, fmt: v => gbp(Math.round(v / 10) * 10) },
-    n: { label: "flats", get: d => d.n, fmt: v => `${Math.round(v)}` },
+    near: { label: "Flats within 30 min", get: d => d.near, fmt: v => `${Math.round(v * 100)}%` },
+    time: { label: "Typical commute", get: d => d.time, fmt: v => `${Math.round(v)} min` },
+    rent: { label: "Typical rent", get: d => d.rent, fmt: v => gbp(Math.round(v / 10) * 10) },
+    n: { label: "Number of flats", get: d => d.n, fmt: v => `${Math.round(v)}` },
   };
   let metric = "near", showFlats = false;
   const W = 900, H = 620;
@@ -653,7 +673,7 @@ btn.addEventListener("click", () => {
     .on("mousemove", (event, f) => {
       const d = DSTAT[f.properties.code];
       if (!d) return showTip(event, `<b>${esc(f.properties.code)}</b><small>no flats in this run</small>`);
-      showTip(event, `<b>${esc(d.code)}</b> ${esc(HOOD[d.code] || "")}<small>${d.n} flat${d.n === 1 ? "" : "s"}${d.n < 4 ? ", too few to rely on" : ""}</small>Median rent <b>${gbp(Math.round(d.rent))}</b><br>Median commute <b>${d.time == null ? "–" : Math.round(d.time) + " min"}</b><br>Within 30 min <b>${d.near == null ? "–" : Math.round(d.near * 100) + "%"}</b><br>Median bike <b>${d.bike == null ? "–" : Math.round(d.bike) + " min"}</b>`);
+      showTip(event, `<b>${esc(d.code)}</b> ${esc(HOOD[d.code] || "")}<small>${d.n} flat${d.n === 1 ? "" : "s"}${d.n < 4 ? ", too few to rely on" : ""}</small>Typical rent <b>${gbp(Math.round(d.rent))}</b><br>Typical commute <b>${d.time == null ? "–" : Math.round(d.time) + " min"}</b><br>Within 30 min <b>${d.near == null ? "–" : Math.round(d.near * 100) + "%"}</b><br>By bike <b>${d.bike == null ? "–" : Math.round(d.bike) + " min"}</b>`);
     })
     .on("mouseleave", hideTip);
   const flatsG = g.append("g").attr("display", "none");
@@ -672,7 +692,7 @@ btn.addEventListener("click", () => {
     const color = d3.scaleQuantize().domain(d3.extent(vals)).range(d3.quantize(d3.interpolateLab(css("--accent-soft"), css("--accent")), 7).slice(1, 6));
     dists.filter(".has").attr("fill", f => { const v = m.get(DSTAT[f.properties.code]); return v == null ? css("--bg") : color(v); });
     const steps = color.range().map(c => { const [a, b] = color.invertExtent(c); return `<i style="background:${c}" title="${m.fmt(a)}–${m.fmt(b)}"></i>`; });
-    d3.select("#dscale").html(`<span>${esc(m.label)}</span><span>${m.fmt(color.domain()[0])}</span><span class="steps">${steps.join("")}</span><span>${m.fmt(color.domain()[1])}</span><span class="steps"><i class="none"></i></span><span>no flats or untimed</span>`);
+    d3.select("#dscale").html(`<b>${esc(m.label)}</b><span class="grp"><span>${m.fmt(color.domain()[0])}</span><span class="steps">${steps.join("")}</span><span>${m.fmt(color.domain()[1])}</span></span><span class="grp"><span class="steps"><i class="none"></i></span><span>no flats</span></span>`);
   }
   d3.selectAll("#h-dmap ~ .toolbar .seg button").on("click", function () {
     metric = this.dataset.m;
@@ -711,7 +731,7 @@ btn.addEventListener("click", () => {
         .on("keydown", (e, d) => { if (e.key === "Enter") open(d.f); });
       const med = median(fs.map(d => d.f[3]));
       svg.append("line").attr("class", "med").attr("x1", x(med)).attr("x2", x(med)).attr("y1", yRow(area) + 8).attr("y2", yRow(area) + RH - 8)
-        .append("title").text(`median ${gbp(Math.round(med))}`);
+        .append("title").text(`typical rent ${gbp(Math.round(med))}`);
     }
   })();
 
@@ -737,13 +757,13 @@ btn.addEventListener("click", () => {
       .attr("tabindex", 0).attr("aria-label", f => `${f[7]}, ${gbp(f[3])}, ${f[4]} sq ft`)
       .on("mousemove", (e, f) => showTip(e, flatTip(f))).on("mouseleave", hideTip).on("click", (e, f) => open(f))
       .on("keydown", (e, f) => { if (e.key === "Enter") open(f); });
-    document.getElementById("scatternote").textContent = `${pts.length} flats state a floor area of 300 sq ft or more. The dashed line is the straight-line trend of rent on size alone: about ${gbp(Math.round(slope * 100))} more a month for each extra 100 sq ft. Dots well below the line give more space for the money. Colors are the commute bands above.`;
+    document.getElementById("scatternote").textContent = `The ${pts.length} flats that state their size. On average, each extra 100 sq ft costs ${gbp(Math.round(slope * 100))} more a month (dashed line). Dots below the line give more space for the money.`;
   })();
 
   // Tube or bike
   (function hist() {
     const modes = [["Tube, DLR or Elizabeth line", f => f[2]], ["Bike", f => f[11]]];
-    const HW = 900, PH = 170, L = 70, R = 20, TOP = 24, B = 44, GAP = 34;
+    const HW = 900, PH = 170, L = 70, R = 20, TOP = 24, B = 44, GAP = 64;
     const svg = d3.select("#hist").attr("viewBox", `0 0 ${HW} ${TOP + modes.length * PH + GAP + B}`);
     const x = d3.scaleLinear().domain([0, 60]).range([L, HW - R]);
     const bins = d3.bin().domain([0, 60]).thresholds(d3.range(0, 61, 5));
@@ -756,19 +776,19 @@ btn.addEventListener("click", () => {
       svg.append("g").attr("class", "grid").attr("transform", `translate(${L},0)`).call(d3.axisLeft(y).ticks(4).tickSize(-(HW - L - R)).tickFormat(""));
       svg.append("g").attr("class", "axis").attr("transform", `translate(${L},0)`).call(d3.axisLeft(y).ticks(4));
       svg.append("g").attr("class", "axis").attr("transform", `translate(0,${top + PH})`).call(d3.axisBottom(x).ticks(12).tickFormat(v => v === 60 ? "60+" : v));
-      svg.append("text").attr("x", L).attr("y", top - 8).style("font-size", "13px").style("font-weight", 600).text(name);
+      const vals = T.flats.map(get).filter(v => v != null);
+      const near = vals.filter(v => v <= 30).length;
+      svg.append("text").attr("x", L).attr("y", top - 10).style("font-size", "13px").style("font-weight", 600)
+        .text(`${name}: ${near} of ${vals.length} flats within 30 min`);
       svg.append("g").selectAll("rect").data(binned[i]).join("rect")
         .attr("x", b => x(b.x0) + 1).attr("width", b => Math.max(0, x(b.x1) - x(b.x0) - 2))
         .attr("y", b => y(b.length)).attr("height", b => y(0) - y(b.length)).attr("rx", 2).attr("fill", "var(--accent)")
         .on("mousemove", (e, b) => showTip(e, `<b>${b.length}</b> flats<small>${b.x0}–${b.x1 === 60 ? "60+" : b.x1} min by ${name.toLowerCase()}</small>`)).on("mouseleave", hideTip);
       svg.append("line").attr("class", "limit").attr("x1", x(30)).attr("x2", x(30)).attr("y1", top).attr("y2", top + PH);
-      const vals = T.flats.map(get).filter(v => v != null);
-      const near = vals.filter(v => v <= 30).length;
-      svg.append("text").attr("class", "ax").attr("x", x(30) + 6).attr("y", top + 12).text(`${near} of ${vals.length} within 30 min`);
       notes.push([name, near, vals.length]);
     });
     svg.append("text").attr("class", "ax").attr("x", (L + HW - R) / 2).attr("y", TOP + modes.length * PH + GAP + B - 6).attr("text-anchor", "middle").text("minutes to Bank, arriving 08:45");
-    document.getElementById("histnote").textContent = `How long each flat takes to reach Bank. By public transport, ${notes[0][1]} of ${notes[0][2]} timed flats are within 30 minutes. By bike, ${notes[1][1]} of ${notes[1][2]} are. The dashed line is your 30-minute limit.`;
+    document.getElementById("histnote").textContent = `By Tube or DLR, ${notes[0][1]} of ${notes[0][2]} flats are within 30 minutes. By bike, ${notes[1][1]} are. If you will cycle, most areas work.`;
   })();
 })();
 </script>
