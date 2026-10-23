@@ -137,6 +137,35 @@ tr.hl td { background: var(--accent-soft); }
 .prompt pre { margin: 0; padding: 18px; font-family: var(--mono); font-size: 12.5px; white-space: pre-wrap; word-break: break-word; max-height: 420px; overflow: auto; }
 .copy { position: absolute; top: 10px; right: 10px; font: 600 13px var(--body); background: var(--accent); color: var(--surface); border: 0; border-radius: 6px; padding: 7px 12px; cursor: pointer; }
 @media (prefers-reduced-motion: no-preference) { .copy { transition: opacity .15s; } .copy:active { opacity: .8; } }
+.d3 { display: block; width: 100%; height: auto; touch-action: pan-y; }
+.d3 text { font-family: var(--body); fill: var(--ink); }
+.d3 .axis text, .d3 .ax { font: 12px var(--mono); fill: var(--muted); }
+.d3 .axis path, .d3 .axis line, .d3 .grid line { stroke: var(--line); }
+.d3 .grid path { display: none; }
+.d3 .limit { stroke: var(--ink); stroke-dasharray: 5 4; stroke-width: 1.5; }
+.d3 .dot { cursor: pointer; }
+.d3 .dot:hover, .d3 .dot:focus-visible { stroke: var(--ink); stroke-width: 2; outline: none; }
+.d3 .med { stroke: var(--ink); stroke-width: 2.5; stroke-linecap: round; }
+#dmap .dist { stroke: var(--surface); stroke-width: 1; vector-effect: non-scaling-stroke; }
+#dmap .dist.empty { fill: var(--bg); stroke: var(--line); }
+#dmap .dist.has { cursor: pointer; }
+#dmap .dist.has:hover { stroke: var(--ink); stroke-width: 2; }
+#dmap .dlabel { font: 600 11px var(--mono); paint-order: stroke; stroke: var(--surface); stroke-width: 3px; pointer-events: none; text-anchor: middle; }
+#dmap .flat { pointer-events: none; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; font-size: 13px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--surface); }
+.seg button { font: 500 13px var(--body); color: var(--muted); background: none; border: 0; padding: 7px 12px; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--surface); }
+.toolbar label { display: inline-flex; gap: 6px; align-items: center; color: var(--muted); }
+.ghost { font: 500 13px var(--body); color: var(--accent); background: none; border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; cursor: pointer; }
+.scale { display: flex; align-items: center; gap: 8px; font: 12px var(--mono); color: var(--muted); flex-wrap: wrap; }
+.scale .steps { display: flex; gap: 2px; }
+.scale .steps i { width: 34px; height: 10px; display: block; border-radius: 2px; }
+.scale .steps i.none { background: var(--bg); border: 1px solid var(--line); }
+#tip { position: fixed; z-index: 10; pointer-events: none; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; font-size: 13px; line-height: 1.4; box-shadow: 0 4px 14px rgb(0 0 0 / .12); max-width: 280px; opacity: 0; }
+#tip b { font-family: var(--mono); }
+#tip small { color: var(--muted); display: block; }
 </style>
 
 <main>
@@ -239,6 +268,49 @@ tr.hl td { background: var(--accent-soft); }
     <div class="mapbox"><svg id="map" role="img" aria-label="Map of 634 flats coloured by commute time to Bank"></svg></div>
   </section>
 
+  <section aria-labelledby="h-dmap">
+    <h2 id="h-dmap">District map</h2>
+    <p class="note">The same flats grouped by postcode district, drawn on the district outlines. Pick what the shading shows. Hover over a district for its numbers. Scroll or pinch to zoom, and drag to move. The map above stays as it was, so you can compare the two.</p>
+    <div class="toolbar">
+      <div class="seg" role="group" aria-label="Shade districts by">
+        <button type="button" data-m="near" aria-pressed="true">Share ≤30 min</button>
+        <button type="button" data-m="time" aria-pressed="false">Median commute</button>
+        <button type="button" data-m="rent" aria-pressed="false">Median rent</button>
+        <button type="button" data-m="n" aria-pressed="false">Flats</button>
+      </div>
+      <label><input type="checkbox" id="dflats"> Show flats</label>
+      <button type="button" class="ghost" id="dreset">Reset zoom</button>
+    </div>
+    <div class="scale" id="dscale"></div>
+    <div class="mapbox"><svg id="dmap" class="d3" role="img" aria-label="Postcode districts shaded by the chosen measure. The districts table above lists every value."></svg></div>
+    <p class="note">District outlines: Wikipedia's postcode district maps (CC BY-SA), via missinglink/uk-postcode-polygons. They are approximate, so a flat near a boundary can look misplaced. Each flat keeps the district from its own listing. A dashed outline means fewer than 4 flats.</p>
+  </section>
+
+  <section aria-labelledby="h-swarm">
+    <h2 id="h-swarm">Every rent, by area</h2>
+    <p class="note">Each dot is one flat. Its color is the commute band from the map, and the black tick is the area's median rent. Hover over a dot for details, or click it to open the listing.</p>
+    <div class="legend">
+      <span><i style="background:var(--good)"></i>20 min or less</span>
+      <span><i style="background:var(--accent)"></i>21–30 min</span>
+      <span><i style="background:var(--far)"></i>over 30 min or untimed</span>
+      <span><i class="ring"></i>let agreed</span>
+    </div>
+    <div class="mapbox"><svg id="swarm" class="d3" role="img" aria-label="Rent of every flat, one row per area. The eight areas compared table lists the medians."></svg></div>
+  </section>
+
+  <section aria-labelledby="h-scatter">
+    <h2 id="h-scatter">Rent against floor area</h2>
+    <p class="note" id="scatternote">Flats with a stated floor area. The line is the straight-line trend of rent on size alone.</p>
+    <div class="mapbox"><svg id="scatter" class="d3" role="img" aria-label="Rent against floor area for flats with a stated size, coloured by commute band"></svg></div>
+  </section>
+
+  <section aria-labelledby="h-hist">
+    <h2 id="h-hist">Tube or bike</h2>
+    <p class="note" id="histnote"></p>
+    <div class="mapbox"><svg id="hist" class="d3" role="img" aria-label="Number of flats by minutes to Bank, by public transport and by bike"></svg></div>
+  </section>
+  <div id="tip" role="status" aria-live="polite"></div>
+
   <section>
     <h2>Rent review</h2>
     <p class="note">Two tests. First, each area's asking rents against the ONS average two-bed rent in its borough. The ONS figure averages every current two-bed tenancy, including older leases and one-bath flats, so new two-bath lets normally sit above it. Second, each flat's £ per sq ft against its own area's median, which shows the flats priced below their neighbours.</p>
@@ -303,7 +375,9 @@ tr.hl td { background: var(--accent-soft); }
   </section>
 </main>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <script src="flats.js"></script>
+<script src="districts.js"></script>
 <script>
 const AREAS = [
   ["Aldgate / Tower Hill / Whitechapel", 46, 48, 31, 2762, 3.78, 700, 7, 0.33, true],
@@ -530,4 +604,171 @@ btn.addEventListener("click", () => {
   });
   setTimeout(() => { btn.textContent = "Copy prompt"; }, 2000);
 });
+</script>
+<script>
+(function d3Views() {
+  if (!window.d3) return;
+  const css = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  const band = t => t == null ? "var(--far)" : t <= 20 ? "var(--good)" : t <= 30 ? "var(--accent)" : "var(--far)";
+  const tip = d3.select("#tip");
+  const showTip = (event, html) => {
+    tip.html(html).style("opacity", 1);
+    const r = tip.node().getBoundingClientRect();
+    const x = Math.min(event.clientX + 14, innerWidth - r.width - 8), y = event.clientY + 14 + r.height > innerHeight ? event.clientY - r.height - 10 : event.clientY + 14;
+    tip.style("left", `${x}px`).style("top", `${y}px`);
+  };
+  const hideTip = () => tip.style("opacity", 0);
+  const flatTip = f => `${esc(f[7])}<small>${esc(SHORTNAME[f[6]] || f[6])} · ${esc(f[10] || "")}</small><b>${gbp(f[3])}</b> pcm${f[4] ? ` · ${f[4]} sq ft` : ""}<br>${f[2] == null ? "no commute time" : `${f[2]} min by Tube/DLR`}${f[11] != null ? ` · ${f[11]} min by bike` : ""}${f[5] ? "" : "<br>let agreed"}`;
+  const open = f => window.open(f[8], "_blank", "noopener");
+
+  // District map
+  const DSTAT = Object.fromEntries(DIST.map(d => [d.code, d]));
+  const METRICS = {
+    near: { label: "share of timed flats ≤30 min", get: d => d.near, fmt: v => `${Math.round(v * 100)}%` },
+    time: { label: "median minutes to Bank", get: d => d.time, fmt: v => `${Math.round(v)} min` },
+    rent: { label: "median rent", get: d => d.rent, fmt: v => gbp(Math.round(v / 10) * 10) },
+    n: { label: "flats", get: d => d.n, fmt: v => `${Math.round(v)}` },
+  };
+  let metric = "near", showFlats = false;
+  const W = 900, H = 620;
+  const dsvg = d3.select("#dmap").attr("viewBox", `0 0 ${W} ${H}`);
+  const withFlats = window.DISTRICTS.features.filter(f => DSTAT[f.properties.code]);
+  const proj = d3.geoMercator().fitExtent([[10, 10], [W - 10, H - 10]], {
+    type: "FeatureCollection",
+    features: [...withFlats, { type: "Feature", geometry: { type: "MultiPoint", coordinates: T.flats.map(f => [f[1], f[0]]) } }],
+  });
+  const path = d3.geoPath(proj);
+  const g = dsvg.append("g");
+  const zoom = d3.zoom().scaleExtent([1, 8]).translateExtent([[0, 0], [W, H]]).on("zoom", e => {
+    g.attr("transform", e.transform);
+    g.selectAll(".dlabel").style("font-size", `${11 / e.transform.k}px`).style("stroke-width", `${3 / e.transform.k}px`);
+    g.selectAll(".flat").attr("r", 2.6 / Math.sqrt(e.transform.k));
+  });
+  dsvg.call(zoom);
+  d3.select("#dreset").on("click", () => dsvg.transition().duration(300).call(zoom.transform, d3.zoomIdentity));
+  const dists = g.append("g").selectAll("path").data(window.DISTRICTS.features).join("path")
+    .attr("d", path)
+    .attr("class", f => `dist ${DSTAT[f.properties.code] ? "has" : "empty"}`)
+    .style("stroke-dasharray", f => DSTAT[f.properties.code] && DSTAT[f.properties.code].n < 4 ? "3 3" : null)
+    .on("mousemove", (event, f) => {
+      const d = DSTAT[f.properties.code];
+      if (!d) return showTip(event, `<b>${esc(f.properties.code)}</b><small>no flats in this run</small>`);
+      showTip(event, `<b>${esc(d.code)}</b> ${esc(HOOD[d.code] || "")}<small>${d.n} flat${d.n === 1 ? "" : "s"}${d.n < 4 ? ", too few to rely on" : ""}</small>Median rent <b>${gbp(Math.round(d.rent))}</b><br>Median commute <b>${d.time == null ? "–" : Math.round(d.time) + " min"}</b><br>Within 30 min <b>${d.near == null ? "–" : Math.round(d.near * 100) + "%"}</b><br>Median bike <b>${d.bike == null ? "–" : Math.round(d.bike) + " min"}</b>`);
+    })
+    .on("mouseleave", hideTip);
+  const flatsG = g.append("g").attr("display", "none");
+  flatsG.selectAll("circle").data(T.flats).join("circle").attr("class", "flat")
+    .attr("cx", f => proj([f[1], f[0]])[0]).attr("cy", f => proj([f[1], f[0]])[1]).attr("r", 2.6)
+    .attr("fill", f => band(f[2])).attr("stroke", "var(--surface)").attr("stroke-width", 0.6);
+  const [bx, by] = proj([BANK[1], BANK[0]]);
+  g.append("rect").attr("x", bx - 6).attr("y", by - 6).attr("width", 12).attr("height", 12).attr("fill", "var(--bad)").attr("stroke", "var(--surface)").attr("stroke-width", 2).attr("transform", `rotate(45 ${bx} ${by})`);
+  g.append("text").attr("class", "dlabel").attr("x", bx).attr("y", by - 12).text("Bank");
+  g.append("g").selectAll("text").data(withFlats).join("text").attr("class", "dlabel")
+    .attr("x", f => path.centroid(f)[0]).attr("y", f => path.centroid(f)[1] + 4).text(f => f.properties.code);
+
+  function paintMap() {
+    const m = METRICS[metric];
+    const vals = DIST.map(m.get).filter(v => v != null);
+    const color = d3.scaleQuantize().domain(d3.extent(vals)).range(d3.quantize(d3.interpolateLab(css("--accent-soft"), css("--accent")), 7).slice(1, 6));
+    dists.filter(".has").attr("fill", f => { const v = m.get(DSTAT[f.properties.code]); return v == null ? css("--bg") : color(v); });
+    const steps = color.range().map(c => { const [a, b] = color.invertExtent(c); return `<i style="background:${c}" title="${m.fmt(a)}–${m.fmt(b)}"></i>`; });
+    d3.select("#dscale").html(`<span>${esc(m.label)}</span><span>${m.fmt(color.domain()[0])}</span><span class="steps">${steps.join("")}</span><span>${m.fmt(color.domain()[1])}</span><span class="steps"><i class="none"></i></span><span>no flats or untimed</span>`);
+  }
+  d3.selectAll("#h-dmap ~ .toolbar .seg button").on("click", function () {
+    metric = this.dataset.m;
+    d3.selectAll("#h-dmap ~ .toolbar .seg button").attr("aria-pressed", function () { return String(this.dataset.m === metric); });
+    paintMap();
+  });
+  d3.select("#dflats").on("change", function () { showFlats = this.checked; flatsG.attr("display", showFlats ? null : "none"); });
+  paintMap();
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", paintMap);
+
+  // Every rent, by area
+  (function swarm() {
+    const medRent = area => median(T.flats.filter(f => f[6] === area).map(f => f[3]));
+    const order = Object.keys(SHORTNAME).sort((a, b) => medRent(a) - medRent(b));
+    const RW = 900, RH = 64, L = 116, R = 20, TOP = 10, B = 40;
+    const svg = d3.select("#swarm").attr("viewBox", `0 0 ${RW} ${TOP + order.length * RH + B}`);
+    const x = d3.scaleLinear().domain([d3.min(T.flats, f => f[3]) - 50, 3000]).range([L, RW - R]).nice();
+    const yRow = d3.scaleBand().domain(order).range([TOP, TOP + order.length * RH]);
+    svg.append("g").attr("class", "grid").attr("transform", `translate(0,${TOP})`)
+      .call(d3.axisBottom(x).ticks(8).tickSize(order.length * RH).tickFormat(""));
+    svg.append("g").attr("class", "axis").attr("transform", `translate(0,${TOP + order.length * RH})`)
+      .call(d3.axisBottom(x).ticks(8).tickFormat(v => "£" + d3.format(",")(v)));
+    svg.append("text").attr("class", "ax").attr("x", (L + RW - R) / 2).attr("y", TOP + order.length * RH + 36).attr("text-anchor", "middle").text("rent per month");
+    for (const area of order) {
+      const fs = T.flats.filter(f => f[6] === area).map(f => ({ f, x: x(f[3]), y: yRow(area) + RH / 2 }));
+      const sim = d3.forceSimulation(fs).force("x", d3.forceX(d => x(d.f[3])).strength(1)).force("y", d3.forceY(yRow(area) + RH / 2).strength(0.08)).force("c", d3.forceCollide(3.4)).stop();
+      for (let i = 0; i < 160; i++) sim.tick();
+      fs.forEach(d => { d.y = Math.max(yRow(area) + 5, Math.min(yRow(area) + RH - 5, d.y)); });
+      svg.append("text").attr("x", 0).attr("y", yRow(area) + RH / 2 + 4).style("font-size", "13px").style("font-weight", 600).text(SHORTNAME[area]);
+      svg.append("text").attr("class", "ax").attr("x", 0).attr("y", yRow(area) + RH / 2 + 20).text(`${fs.length} flats`);
+      svg.append("g").selectAll("circle").data(fs).join("circle").attr("class", "dot")
+        .attr("cx", d => d.x).attr("cy", d => d.y).attr("r", 3)
+        .attr("fill", d => d.f[5] ? band(d.f[2]) : "none").attr("stroke", d => d.f[5] ? "var(--surface)" : band(d.f[2])).attr("stroke-width", d => d.f[5] ? 0.6 : 1.4)
+        .attr("tabindex", 0).attr("aria-label", d => `${d.f[7]}, ${gbp(d.f[3])}`)
+        .on("mousemove", (e, d) => showTip(e, flatTip(d.f))).on("mouseleave", hideTip).on("click", (e, d) => open(d.f))
+        .on("keydown", (e, d) => { if (e.key === "Enter") open(d.f); });
+      const med = median(fs.map(d => d.f[3]));
+      svg.append("line").attr("class", "med").attr("x1", x(med)).attr("x2", x(med)).attr("y1", yRow(area) + 8).attr("y2", yRow(area) + RH - 8)
+        .append("title").text(`median ${gbp(Math.round(med))}`);
+    }
+  })();
+
+  // Rent against floor area
+  (function scatter() {
+    const pts = T.flats.filter(f => f[4] && f[4] >= 300);
+    const SW = 900, SH = 460, L = 70, R = 20, TOP = 16, B = 50;
+    const svg = d3.select("#scatter").attr("viewBox", `0 0 ${SW} ${SH}`);
+    const x = d3.scaleLinear().domain(d3.extent(pts, f => f[4])).nice().range([L, SW - R]);
+    const y = d3.scaleLinear().domain(d3.extent(pts, f => f[3])).nice().range([SH - B, TOP]);
+    svg.append("g").attr("class", "grid").attr("transform", `translate(${L},0)`).call(d3.axisLeft(y).ticks(6).tickSize(-(SW - L - R)).tickFormat(""));
+    svg.append("g").attr("class", "axis").attr("transform", `translate(0,${SH - B})`).call(d3.axisBottom(x).ticks(8));
+    svg.append("g").attr("class", "axis").attr("transform", `translate(${L},0)`).call(d3.axisLeft(y).ticks(6).tickFormat(v => "£" + d3.format(",")(v)));
+    svg.append("text").attr("class", "ax").attr("x", (L + SW - R) / 2).attr("y", SH - 10).attr("text-anchor", "middle").text("floor area, sq ft");
+    const mx = d3.mean(pts, f => f[4]), my = d3.mean(pts, f => f[3]);
+    const slope = d3.sum(pts, f => (f[4] - mx) * (f[3] - my)) / d3.sum(pts, f => (f[4] - mx) ** 2);
+    const [a, b] = x.domain();
+    svg.append("line").attr("x1", x(a)).attr("x2", x(b)).attr("y1", y(my + slope * (a - mx))).attr("y2", y(my + slope * (b - mx)))
+      .attr("stroke", "var(--ink)").attr("stroke-width", 2).attr("stroke-dasharray", "6 4");
+    svg.append("g").selectAll("circle").data([...pts].sort((p, q) => (q[2] ?? 99) - (p[2] ?? 99))).join("circle").attr("class", "dot")
+      .attr("cx", f => x(f[4])).attr("cy", f => y(f[3])).attr("r", 4.5)
+      .attr("fill", f => f[5] ? band(f[2]) : "none").attr("stroke", f => f[5] ? "var(--surface)" : band(f[2])).attr("stroke-width", f => f[5] ? 1 : 1.6)
+      .attr("tabindex", 0).attr("aria-label", f => `${f[7]}, ${gbp(f[3])}, ${f[4]} sq ft`)
+      .on("mousemove", (e, f) => showTip(e, flatTip(f))).on("mouseleave", hideTip).on("click", (e, f) => open(f))
+      .on("keydown", (e, f) => { if (e.key === "Enter") open(f); });
+    document.getElementById("scatternote").textContent = `${pts.length} flats state a floor area of 300 sq ft or more. The dashed line is the straight-line trend of rent on size alone: about ${gbp(Math.round(slope * 100))} more a month for each extra 100 sq ft. Dots well below the line give more space for the money. Colors are the commute bands above.`;
+  })();
+
+  // Tube or bike
+  (function hist() {
+    const modes = [["Tube, DLR or Elizabeth line", f => f[2]], ["Bike", f => f[11]]];
+    const HW = 900, PH = 170, L = 70, R = 20, TOP = 24, B = 44, GAP = 34;
+    const svg = d3.select("#hist").attr("viewBox", `0 0 ${HW} ${TOP + modes.length * PH + GAP + B}`);
+    const x = d3.scaleLinear().domain([0, 60]).range([L, HW - R]);
+    const bins = d3.bin().domain([0, 60]).thresholds(d3.range(0, 61, 5));
+    const binned = modes.map(([, get]) => bins(T.flats.map(get).filter(v => v != null).map(v => Math.min(v, 59.9))));
+    const yMax = d3.max(binned.flat(), b => b.length);
+    const notes = [];
+    modes.forEach(([name, get], i) => {
+      const top = TOP + i * (PH + GAP);
+      const y = d3.scaleLinear().domain([0, yMax]).nice().range([top + PH, top]);
+      svg.append("g").attr("class", "grid").attr("transform", `translate(${L},0)`).call(d3.axisLeft(y).ticks(4).tickSize(-(HW - L - R)).tickFormat(""));
+      svg.append("g").attr("class", "axis").attr("transform", `translate(${L},0)`).call(d3.axisLeft(y).ticks(4));
+      svg.append("g").attr("class", "axis").attr("transform", `translate(0,${top + PH})`).call(d3.axisBottom(x).ticks(12).tickFormat(v => v === 60 ? "60+" : v));
+      svg.append("text").attr("x", L).attr("y", top - 8).style("font-size", "13px").style("font-weight", 600).text(name);
+      svg.append("g").selectAll("rect").data(binned[i]).join("rect")
+        .attr("x", b => x(b.x0) + 1).attr("width", b => Math.max(0, x(b.x1) - x(b.x0) - 2))
+        .attr("y", b => y(b.length)).attr("height", b => y(0) - y(b.length)).attr("rx", 2).attr("fill", "var(--accent)")
+        .on("mousemove", (e, b) => showTip(e, `<b>${b.length}</b> flats<small>${b.x0}–${b.x1 === 60 ? "60+" : b.x1} min by ${name.toLowerCase()}</small>`)).on("mouseleave", hideTip);
+      svg.append("line").attr("class", "limit").attr("x1", x(30)).attr("x2", x(30)).attr("y1", top).attr("y2", top + PH);
+      const vals = T.flats.map(get).filter(v => v != null);
+      const near = vals.filter(v => v <= 30).length;
+      svg.append("text").attr("class", "ax").attr("x", x(30) + 6).attr("y", top + 12).text(`${near} of ${vals.length} within 30 min`);
+      notes.push([name, near, vals.length]);
+    });
+    svg.append("text").attr("class", "ax").attr("x", (L + HW - R) / 2).attr("y", TOP + modes.length * PH + GAP + B - 6).attr("text-anchor", "middle").text("minutes to Bank, arriving 08:45");
+    document.getElementById("histnote").textContent = `How long each flat takes to reach Bank. By public transport, ${notes[0][1]} of ${notes[0][2]} timed flats are within 30 minutes. By bike, ${notes[1][1]} of ${notes[1][2]} are. The dashed line is your 30-minute limit.`;
+  })();
+})();
 </script>
