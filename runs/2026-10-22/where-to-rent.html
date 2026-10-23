@@ -21,6 +21,9 @@
   --district: #00782a;
   --walk: #6b7780;
   --far: #b7c0c4;
+  --c-price: #b4531f;
+  --c-time: #0d5c75;
+  --c-space: #6a4fb3;
   --display: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
   --body: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
@@ -29,13 +32,13 @@
   :root:not([data-theme="light"]) {
     --bg: #11181d; --surface: #182229; --ink: #e6ecee; --muted: #9aa8b0; --line: #2b3a43;
     --accent: #6cc3dc; --accent-soft: #1b3440; --good: #5fcf94; --warn: #e2b54a; --bad: #ef8579;
-    --walk: #9aa8b0; --far: #4a5a63; color-scheme: dark;
+    --walk: #9aa8b0; --far: #4a5a63; --c-price: #f0995f; --c-time: #6cc3dc; --c-space: #b49cf2; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #11181d; --surface: #182229; --ink: #e6ecee; --muted: #9aa8b0; --line: #2b3a43;
   --accent: #6cc3dc; --accent-soft: #1b3440; --good: #5fcf94; --warn: #e2b54a; --bad: #ef8579;
-  --walk: #9aa8b0; --far: #4a5a63; color-scheme: dark;
+  --walk: #9aa8b0; --far: #4a5a63; --c-price: #f0995f; --c-time: #6cc3dc; --c-space: #b49cf2; color-scheme: dark;
 }
 * { box-sizing: border-box; }
 body {
@@ -96,6 +99,39 @@ tr.hl td { background: var(--accent-soft); }
 #map .ringlbl { font: 11px var(--mono); fill: var(--muted); }
 #map a:focus-visible circle { stroke: var(--ink); stroke-width: 2; }
 .pos { color: var(--bad); } .neg { color: var(--good); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+#bubbles { display: block; width: 100%; height: auto; }
+#bubbles text { font-family: var(--body); fill: var(--ink); }
+#bubbles .axis { font: 12px var(--mono); fill: var(--muted); }
+#bubbles .grid { stroke: var(--line); }
+#bubbles .zone { fill: var(--accent-soft); }
+#bubbles .limit { stroke: var(--accent); stroke-dasharray: 5 4; }
+#bubbles .code { font-weight: 700; font-size: 13px; paint-order: stroke; stroke: var(--surface); stroke-width: 4px; }
+.chip { display: inline-block; font: 600 12px var(--mono); padding: 2px 8px; border-radius: 999px; color: var(--surface); }
+.chip.ok { background: var(--good); } .chip.mid { background: var(--accent); } .chip.far { background: var(--far); color: var(--ink); }
+.equation { font: 500 15px var(--mono); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; line-height: 1.9; overflow-wrap: anywhere; }
+.equation.big { font-size: clamp(15px, 2.6vw, 20px); }
+.equation .op { color: var(--muted); padding: 0 4px; }
+.t-price { color: var(--c-price); } .t-time { color: var(--c-time); } .t-space { color: var(--c-space); }
+.sliders { display: grid; grid-template-columns: minmax(0, 170px) minmax(0, 1fr); gap: 10px 16px; align-items: center; }
+.sliders label { display: flex; align-items: center; gap: 8px; font-weight: 500; }
+.sliders output { font-family: var(--mono); min-width: 2.5ch; text-align: right; }
+.sliders input { width: 100%; accent-color: var(--accent); }
+.sw { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+.ranking { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; counter-reset: rank; }
+.ranking li { counter-increment: rank; display: grid; grid-template-columns: 2.2ch minmax(0, 1fr) minmax(90px, 38%) 3.5ch; gap: 10px; align-items: center; font-size: 14px; }
+.ranking li::before { content: counter(rank); font: 600 13px var(--mono); color: var(--muted); }
+.ranking .who { min-width: 0; }
+.ranking .who a { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ranking .who small { color: var(--muted); font-family: var(--mono); font-size: 12px; }
+.stack { display: flex; height: 14px; border-radius: 4px; overflow: hidden; background: var(--line); }
+.stack i { display: block; height: 100%; }
+.ranking .pts { font: 600 14px var(--mono); text-align: right; }
+.explain { display: grid; gap: 8px; max-width: 560px; }
+.explain div { display: grid; grid-template-columns: 140px minmax(0, 1fr) 4ch; gap: 10px; align-items: center; font-size: 14px; }
+.explain i { display: block; height: 12px; background: var(--accent); border-radius: 3px; min-width: 2px; }
+.explain b { font-family: var(--mono); text-align: right; }
+@media (max-width: 520px) { .ranking li { grid-template-columns: 2.2ch minmax(0, 1fr) 3.5ch; } .ranking .stack { grid-column: 2 / 4; } }
 .caveats { display: grid; gap: 8px; padding-left: 18px; margin: 0; }
 .prompt { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
 .prompt pre { margin: 0; padding: 18px; font-family: var(--mono); font-size: 12.5px; white-space: pre-wrap; word-break: break-word; max-height: 420px; overflow: auto; }
@@ -141,6 +177,54 @@ tr.hl td { background: var(--accent-soft); }
       </ul>
     </div>
   </div>
+
+  <section aria-labelledby="h-districts">
+    <h2 id="h-districts">Districts at a glance</h2>
+    <p class="note">Each bubble is one postcode district. Further left means a shorter commute, lower down means cheaper rent, and a bigger bubble means more flats. The best place to be is the shaded corner: 30 minutes or less, and below the £2,750 middle of your budget. Districts with fewer than 4 flats are left out of the chart but kept in the table.</p>
+    <div class="mapbox"><svg id="bubbles" role="img" aria-labelledby="bubbles-title bubbles-desc"><title id="bubbles-title">Median rent against median commute for each postcode district</title><desc id="bubbles-desc">E1 and E1W are the only large districts inside the 30-minute line. E14 and E16 have the most flats but sit beyond it. The table below lists every value.</desc></svg></div>
+    <div class="scroll">
+      <table>
+        <caption class="sr">Postcode districts sorted by median commute</caption>
+        <thead><tr><th>District</th><th>Neighbourhood</th><th class="r">Flats</th><th class="r">Median rent</th><th>Median commute</th><th class="r">Share ≤30 min</th><th class="r">Median bike</th></tr></thead>
+        <tbody id="districts"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-score">
+    <h2 id="h-score">Your value score</h2>
+    <p class="note">This scores every available flat that is 30 minutes or less from Bank and has a known floor area. Each flat gets 0–100 points for price (cheapest = 100), commute (fastest = 100) and space (largest = 100). Move the sliders to say how much each one matters to you. The bar shows where each flat's score comes from.</p>
+    <div class="equation" aria-live="polite" id="equation"></div>
+    <div class="sliders">
+      <label for="w-price"><span class="sw" style="background:var(--c-price)"></span>Price <output id="o-price">40</output>%</label>
+      <input type="range" id="w-price" min="0" max="100" step="5" value="40">
+      <label for="w-time"><span class="sw" style="background:var(--c-time)"></span>Commute <output id="o-time">35</output>%</label>
+      <input type="range" id="w-time" min="0" max="100" step="5" value="35">
+      <label for="w-space"><span class="sw" style="background:var(--c-space)"></span>Space <output id="o-space">25</output>%</label>
+      <input type="range" id="w-space" min="0" max="100" step="5" value="25">
+    </div>
+    <ol class="ranking" id="ranking"></ol>
+    <p class="note" id="scorenote"></p>
+  </section>
+
+  <section aria-labelledby="h-drivers">
+    <h2 id="h-drivers">What sets the rent</h2>
+    <p class="note">This fits one equation to the 260 flats that have both a floor area and a commute time:</p>
+    <div class="equation big">
+      Rent ≈ <b>£2,490</b> <span class="op">+</span> <b class="t-space">£0.57</b> × sq ft <span class="op">−</span> <b class="t-time">£8</b> × minutes to Bank
+    </div>
+    <div class="facts" style="font-size:14px">
+      <span>An extra <b>100 sq ft</b> adds about <b>£57</b> a month.</span>
+      <span>Each minute <b>closer to Bank</b> adds about <b>£8</b> a month.</span>
+    </div>
+    <p>The equation is weak. Size and commute together explain only 12% of the differences in rent, and a typical flat sits £255 away from its prediction. Your £3,000 cap packs every rent into a narrow band, so the building and the listing matter more than any formula. Knowing the district explains a little more than size and commute, but most of the spread stays unexplained:</p>
+    <div class="explain" role="img" aria-label="Share of rent differences explained: postcode district 17 percent, size and commute 12 percent, tracker area 10 percent">
+      <div><span>Postcode district</span><i style="width:17%"></i><b>17%</b></div>
+      <div><span>Size + commute</span><i style="width:12%"></i><b>12%</b></div>
+      <div><span>Tracker area</span><i style="width:10%"></i><b>10%</b></div>
+    </div>
+    <p>In practice, choose the district for its commute, then look for the flats priced below their neighbours. The rent review below lists them.</p>
+  </section>
 
   <section>
     <h2>Where the flats are</h2>
@@ -204,6 +288,8 @@ tr.hl td { background: var(--accent-soft); }
       <li>Shoreditch's Chequer Street flat (EC1Y) is the best value at 18 minutes on foot. It costs the full £3,000, so it leaves no room for a rise.</li>
       <li>Four listings give impossible floor areas (1–71 sq ft). They are left out of every £/sq ft figure.</li>
       <li>TfL times use each flat's coordinates rounded to about 100 m. Walking time to the station can differ by a few minutes.</li>
+      <li>Every DLR route ends with TfL's 9-minute walk from Bank DLR to your office, which covers 297 of the 615 timed flats. Google Maps, through Gemini, gave 3 minutes. The DLR platforms are deep, so the true figure is probably in between. If that walk is 4 minutes shorter, Canary Wharf gains 44 more flats within 30 minutes (51 to 95), Wapping gains 7, and Royal Docks goes from 0 to 13. E1 does not change. Time the walk yourself once, from the DLR platform to the door.</li>
+      <li>The tracker misses some build-to-rent flats. A second price series found 6 Fizzy units in E16 (Vermilion Tower and East 16) at £2,409–£2,885, and the tracker has none of them. It dropped 13 Fizzy and 31 Tipi two-bed units because their pages give no postcode, yet still marked those searches OK.</li>
     </ul>
   </section>
 
@@ -358,6 +444,83 @@ document.getElementById("review").innerHTML = Object.keys(BOROUGH).map(area => {
 const deals = T.flats.filter(f => f[5] && f[2] != null && f[2] <= 30 && f[9] != null && f[9] <= -0.10).sort((a, b) => a[9] - b[9]);
 document.getElementById("deals").innerHTML = deals.slice(0, 15).map(([, , tr, price, sq, , area, addr, url, v]) => `
   <tr class="${/Aldgate|Wapping/.test(area) ? "hl" : ""}"><td><a href="${esc(url)}" target="_blank" rel="noopener">${esc(addr)}</a></td><td>${esc(SHORTNAME[area])}</td><td class="r num">${gbp(price)}</td><td class="r num">${sq}</td><td class="r num">${(price / sq).toFixed(2)}</td><td class="r num neg">${pct(v)}</td><td class="r num">${tr} min</td></tr>`).join("");
+const HOOD = {
+  E1: "Whitechapel, Aldgate", E1W: "Wapping", E2: "Bethnal Green, Shoreditch", E3: "Bow", E8: "Hackney", E13: "Plaistow",
+  E14: "Canary Wharf, Poplar", E15: "Stratford", E16: "Royal Docks, Canning Town", E20: "Olympic Park",
+  EC1V: "Old Street", EC1Y: "Barbican", EC2Y: "Barbican", EC3R: "Tower Hill", N1: "Islington, Hoxton", N4: "Finsbury Park",
+  N5: "Highbury", N7: "Holloway", N16: "Stoke Newington", N19: "Archway", SE1: "Bermondsey, Southwark",
+  SE5: "Camberwell", SE11: "Kennington", SE16: "Rotherhithe", SE17: "Walworth, Elephant", WC1X: "King's Cross",
+};
+const byDistrict = {};
+T.flats.forEach(f => { if (f[10]) (byDistrict[f[10]] ||= []).push(f); });
+const DIST = Object.entries(byDistrict).map(([code, fs]) => {
+  const times = fs.map(f => f[2]).filter(t => t != null);
+  const bikes = fs.map(f => f[11]).filter(t => t != null);
+  return {
+    code, n: fs.length, rent: median(fs.map(f => f[3])),
+    time: times.length ? median(times) : null,
+    bike: bikes.length ? median(bikes) : null,
+    near: times.length ? times.filter(t => t <= 30).length / times.length : null,
+  };
+}).sort((a, b) => (a.time ?? 99) - (b.time ?? 99));
+const chip = t => t == null ? "–" : `<span class="chip ${t <= 20 ? "ok" : t <= 30 ? "mid" : "far"}">${Math.round(t)} min</span>`;
+document.getElementById("districts").innerHTML = DIST.map(d => `
+  <tr class="${d.time != null && d.time <= 30 && d.n >= 4 ? "hl" : ""}"><td><b>${esc(d.code)}</b></td><td>${esc(HOOD[d.code] || "")}</td><td class="r num">${d.n}</td><td class="r num">${gbp(Math.round(d.rent))}</td><td>${chip(d.time)}</td><td class="r num">${d.near == null ? "–" : Math.round(d.near * 100) + "%"}</td><td class="r num">${d.bike == null ? "–" : Math.round(d.bike) + " min"}</td></tr>`).join("");
+
+(function drawBubbles() {
+  const svg = document.getElementById("bubbles");
+  const W = 900, H = 440, L = 70, R = 24, TOP = 20, B = 50;
+  const pts = DIST.filter(d => d.n >= 4 && d.time != null);
+  const xMin = 20, xMax = 50, yMin = 2350, yMax = 3050;
+  const x = v => L + (v - xMin) / (xMax - xMin) * (W - L - R);
+  const y = v => TOP + (yMax - v) / (yMax - yMin) * (H - TOP - B);
+  const r = n => 6 + Math.sqrt(n) * 2.6;
+  let s = `<rect class="zone" x="${x(xMin)}" y="${y(2750)}" width="${x(30) - x(xMin)}" height="${y(yMin) - y(2750)}"/>`;
+  s += `<text class="axis" x="${x(xMin) + 8}" y="${y(yMin) - 10}">quicker and cheaper</text>`;
+  for (let v = 2400; v <= 3000; v += 100) s += `<line class="grid" x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}"/><text class="axis" x="${L - 8}" y="${y(v) + 4}" text-anchor="end">£${v.toLocaleString("en-GB")}</text>`;
+  for (let v = 20; v <= 50; v += 5) s += `<text class="axis" x="${x(v)}" y="${H - B + 20}" text-anchor="middle">${v}</text>`;
+  s += `<text class="axis" x="${(L + W - R) / 2}" y="${H - 8}" text-anchor="middle">median minutes to Bank by Tube, DLR or Elizabeth line</text>`;
+  s += `<line class="limit" x1="${x(30)}" x2="${x(30)}" y1="${TOP}" y2="${H - B}"/><text class="axis" x="${x(30) + 6}" y="${TOP + 12}">your 30-min limit</text>`;
+  const placed = [];
+  for (const d of [...pts].sort((a, b) => b.n - a.n)) {
+    const cx = x(d.time), cy = y(d.rent), rr = r(d.n);
+    const col = d.time <= 20 ? "var(--good)" : d.time <= 30 ? "var(--accent)" : "var(--far)";
+    s += `<circle cx="${cx}" cy="${cy}" r="${rr}" fill="${col}" fill-opacity="0.55" stroke="${col}" stroke-width="1.5"><title>${esc(d.code)} ${esc(HOOD[d.code] || "")}: ${d.n} flats, median ${gbp(Math.round(d.rent))}, ${Math.round(d.time)} min</title></circle>`;
+    let ly = cy + 4, lx = cx + rr + 5;
+    const w = d.code.length * 9;
+    while (placed.some(p => Math.abs(p.y - ly) < 14 && lx < p.x + p.w && lx + w > p.x)) ly += 14;
+    placed.push({ x: lx, y: ly, w });
+    s += `<text class="code" x="${lx}" y="${ly}">${esc(d.code)}</text>`;
+  }
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.insertAdjacentHTML("beforeend", s);
+})();
+
+const POOL = T.flats.filter(f => f[5] && f[2] != null && f[2] <= 30 && f[4]);
+const span = (xs) => [Math.min(...xs), Math.max(...xs)];
+const [pLo, pHi] = span(POOL.map(f => f[3])), [tLo, tHi] = span(POOL.map(f => f[2])), [sLo, sHi] = span(POOL.map(f => f[4]));
+const part = (v, lo, hi, invert) => hi === lo ? 100 : 100 * (invert ? (hi - v) / (hi - lo) : (v - lo) / (hi - lo));
+const ids = ["price", "time", "space"];
+function rank() {
+  const raw = ids.map(k => +document.getElementById("w-" + k).value);
+  ids.forEach((k, i) => { document.getElementById("o-" + k).value = raw[i]; });
+  const total = raw.reduce((a, b) => a + b, 0) || 1;
+  const w = raw.map(v => v / total);
+  document.getElementById("equation").innerHTML =
+    `Score = <b class="t-price">${Math.round(w[0] * 100)}%</b> × price points <span class="op">+</span> <b class="t-time">${Math.round(w[1] * 100)}%</b> × commute points <span class="op">+</span> <b class="t-space">${Math.round(w[2] * 100)}%</b> × space points`;
+  const scored = POOL.map(f => {
+    const pts = [part(f[3], pLo, pHi, true), part(f[2], tLo, tHi, true), part(f[4], sLo, sHi, false)].map((p, i) => p * w[i]);
+    return { f, pts, score: pts.reduce((a, b) => a + b, 0) };
+  }).sort((a, b) => b.score - a.score);
+  document.getElementById("ranking").innerHTML = scored.slice(0, 10).map(({ f, pts, score }) => `
+    <li><span class="who"><a href="${esc(f[8])}" target="_blank" rel="noopener">${esc(f[7])}</a><small>${gbp(f[3])} · ${f[4]} sq ft · ${f[2]} min · ${esc(f[10] || "")}</small></span>
+    <span class="stack" role="img" aria-label="price ${Math.round(pts[0])}, commute ${Math.round(pts[1])}, space ${Math.round(pts[2])} points">${pts.map((p, i) => `<i style="width:${p}%;background:var(--c-${ids[i]})"></i>`).join("")}</span>
+    <span class="pts">${Math.round(score)}</span></li>`).join("");
+  document.getElementById("scorenote").textContent = `${POOL.length} flats are scored. Ranges: rent ${gbp(pLo)}–${gbp(pHi)}, commute ${tLo}–${tHi} min, size ${sLo}–${sHi} sq ft. A full bar would be 100 points.`;
+}
+ids.forEach(k => document.getElementById("w-" + k).addEventListener("input", rank));
+rank();
+
 document.getElementById("dealnote").textContent = `${deals.length} flats pass this test. The table shows the 15 furthest below their area's median. Rows in the first-choice E1 band are shaded. A low £/sq ft can also mean a listing overstates its floor area, so check the floor plan.`;
 const btn = document.getElementById("copy");
 btn.addEventListener("click", () => {
